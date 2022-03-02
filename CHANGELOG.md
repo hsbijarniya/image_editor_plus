@@ -1,3 +1,7 @@
+## 0.0.8
+
+* Added github repository.
+
 ## 0.0.7
 
 * ColorFilterGenerator.apply method not found error fixed
