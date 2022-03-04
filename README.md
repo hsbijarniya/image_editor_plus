@@ -1,6 +1,8 @@
 # ImageEditor
 
-Image Editor Plugin with simple, easy support for image editing using Paints, Text, Filters, Emoji and Sticker like stories.
+Image Editor Plugin with simple, easy support for image editing using Paints, Text, Filters, Emoji and Sticker like stories.<br>
+
+This project is fork of [ImageEditorPro](https://github.com/zeeshux7860/ImageEditorPro) package.
   
   
 <img src="https://cdn.ensorta.com/com.ensorta.biller/albums/5b53309f6073bd7662404dc7.1644562653000.HTG8Y6NV8BG.png" width="24%">
@@ -73,10 +75,18 @@ final editedImage = await Navigator.push(
     ),
 );
 ```
-  
+
+### Maintained By
+- [hsbijarniya](https://github.com/hsbijarniya)
+
+### Special Thanks
+- [Zeeshan](https://github.com/zeeshux7860) - Original author of [ImageEditorPro](https://github.com/zeeshux7860/ImageEditorPro)
+- [PhotoEditor by Burhanuddin Rashid](https://github.com/burhanrashid52/PhotoEditor) - Which inspired [ImageEditorPro](https://github.com/zeeshux7860/ImageEditorPro) project
+
   
 ## MIT License
 
+Copyright (c) 2020 Zeeshux7860
 Copyright (c) 2022 hsbijarniya@gmail.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
