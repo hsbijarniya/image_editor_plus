@@ -20,7 +20,6 @@ dependencies:
   path_provider: ^2.0.1
   permission_handler: ^8.3.0
   screenshot: ^1.2.3
-  signature: ^5.0.0
   flutter_colorpicker: ^1.0.3
   collection: ^1.15.0
   nb_utils: ^4.4.11
@@ -29,6 +28,7 @@ dependencies:
   image: ^3.1.1
   image_editor: ^1.0.2
   colorfilter_generator: ^0.0.6
+  hand_signature: ^2.1.1
 
 dev_dependencies:
   flutter_test:
