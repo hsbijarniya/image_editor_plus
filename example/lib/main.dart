@@ -6,7 +6,7 @@ import 'package:image_editor_plus/image_editor_plus.dart';
 
 void main() {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       home: ImageEditorExample(),
     ),
   );
@@ -32,7 +32,7 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
 
   void loadAsset(String name) async {
     var data = await rootBundle.load('assets/$name');
-    setState(() => this.imageData = data.buffer.asUint8List());
+    setState(() => imageData = data.buffer.asUint8List());
   }
 
   @override
@@ -46,20 +46,49 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (imageData != null) Image.memory(imageData!),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
-            child: Text("Edit photo"),
+            child: const Text("Single image editor"),
             onPressed: () async {
-              final editedImage = await Navigator.push(
+              var editedImage = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ImageEditor(
                     image: imageData,
-                    appBarColor: Colors.blue,
-                    bottomBarColor: Colors.blue,
                   ),
                 ),
               );
+
+              // replace with edited image
+              if (editedImage != null) {
+                imageData = editedImage;
+                setState(() {});
+              }
+            },
+          ),
+          ElevatedButton(
+            child: const Text("Multiple image editor"),
+            onPressed: () async {
+              var editedImage = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImageEditor(
+                    images: [
+                      imageData,
+                      imageData,
+                    ],
+                    allowMultiple: true,
+                    allowCamera: true,
+                    allowGallery: true,
+                  ),
+                ),
+              );
+
+              // replace with edited image
+              if (editedImage != null) {
+                imageData = editedImage;
+                setState(() {});
+              }
             },
           ),
         ],
