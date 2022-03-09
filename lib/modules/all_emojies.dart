@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/data/data.dart';
+import 'package:image_editor_plus/data/layer.dart';
 
 class Emojies extends StatefulWidget {
   const Emojies({Key? key}) : super(key: key);
@@ -9,22 +10,12 @@ class Emojies extends StatefulWidget {
 }
 
 class _EmojiesState extends State<Emojies> {
-  List emojes = <dynamic>[];
-
-  List<String> emojis = [];
-
-  @override
-  void initState() {
-    super.initState();
-    emojis = getSmileys();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(0.0),
+      padding: const EdgeInsets.all(0.0),
       height: 400,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(32),
           topRight: Radius.circular(32),
@@ -39,44 +30,43 @@ class _EmojiesState extends State<Emojies> {
       ),
       child: Column(
         children: [
-          SizedBox(height: 16),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const SizedBox(height: 16),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
             Text(
               'Select Emoji',
               style: TextStyle(color: Colors.white),
             ),
           ]),
-          Divider(height: 1),
-          SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 16),
           Container(
             height: 315,
-            padding: EdgeInsets.all(0.0),
+            padding: const EdgeInsets.all(0.0),
             child: GridView(
               shrinkWrap: true,
-              physics: ClampingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.vertical,
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisSpacing: 0.0, maxCrossAxisExtent: 60.0),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                mainAxisSpacing: 0.0,
+                maxCrossAxisExtent: 60.0,
+              ),
               children: emojis.map((String emoji) {
                 return GridTile(
                     child: GestureDetector(
                   onTap: () {
-                    Navigator.pop(context, {
-                      'type': 'emoji',
-                      'background': Colors.transparent,
-                      'value': emoji,
-                      'color': Colors.white,
-                      'size': 32.0,
-                      'align': TextAlign.center,
-                    });
+                    Navigator.pop(
+                      context,
+                      EmojiLayerData(
+                        text: emoji,
+                        size: 32.0,
+                      ),
+                    );
                   },
                   child: Container(
                     padding: EdgeInsets.zero,
                     child: Text(
                       emoji,
-                      style: TextStyle(
-                        fontSize: 35,
-                      ),
+                      style: const TextStyle(fontSize: 35),
                     ),
                   ),
                 ));

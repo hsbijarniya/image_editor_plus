@@ -1,3 +1,8 @@
+## 0.0.9
+
+* Changed signature library.
+* Deleted unused code.
+
 ## 0.0.8
 
 * Added github repository.

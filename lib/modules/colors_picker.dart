@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 enum PickMode {
-  Color,
-  Grey,
+  color,
+  grey,
 }
 
 /// A listener which receives an color in int representation. as used
@@ -15,9 +15,6 @@ const _kThumbShadowColor = Color(0x44000000);
 
 /// A padding used to calculate bar height(thumbRadius * 2 - kBarPadding).
 const _kBarPadding = 4;
-
-/// Base64 encoded image for alpha picker background
-//const _kAlphaTexture = "iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==";
 
 /// A bar color picker
 class BarColorPicker extends StatefulWidget {
@@ -47,9 +44,9 @@ class BarColorPicker extends StatefulWidget {
   /// initial color of this color picker.
   final Color initialColor;
 
-  BarColorPicker({
+  const BarColorPicker({
     Key? key,
-    this.pickMode = PickMode.Color,
+    this.pickMode = PickMode.color,
     this.horizontal = true,
     this.width = 200,
     this.cornerRadius = 0.0,
@@ -79,7 +76,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
       barHeight = widget.width;
     }
     switch (widget.pickMode) {
-      case PickMode.Color:
+      case PickMode.color:
         colors = const [
           Color(0xffff0000),
           Color(0xffffff00),
@@ -90,7 +87,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
           Color(0xffff0000)
         ];
         break;
-      case PickMode.Grey:
+      case PickMode.grey:
         colors = const [Color(0xff000000), Color(0xffffffff)];
         break;
     }
@@ -118,7 +115,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
         height: thumbRadius * 2,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(thumbRadius),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: _kThumbShadowColor,
               spreadRadius: 2,
@@ -167,7 +164,7 @@ class _BarColorPickerState extends State<BarColorPicker> {
           borderRadius: BorderRadius.circular(widget.cornerRadius),
           gradient: gradient,
         ),
-        child: Text(''),
+        child: const Text(''),
       ),
     );
 
@@ -194,11 +191,11 @@ class _BarColorPickerState extends State<BarColorPicker> {
       this.percent = percent;
     });
     switch (widget.pickMode) {
-      case PickMode.Color:
+      case PickMode.color:
         var color = HSVColor.fromAHSV(1.0, percent * 360, 1.0, 1.0).toColor();
         widget.colorListener(color.value);
         break;
-      case PickMode.Grey:
+      case PickMode.grey:
         final channel = (0xff * percent).toInt();
         widget.colorListener(
             Color.fromARGB(0xff, channel, channel, channel).value);
@@ -281,7 +278,7 @@ class _CircleColorPickerState extends State<CircleColorPicker> {
           width: thumbRadius * 2,
           height: thumbRadius * 2,
           decoration: BoxDecoration(
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: _kThumbShadowColor,
                 spreadRadius: 2,
@@ -314,9 +311,9 @@ class _CircleColorPickerState extends State<CircleColorPicker> {
               height: radius * 2,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(radius),
-                gradient: SweepGradient(colors: colors),
+                gradient: const SweepGradient(colors: colors),
               ),
-              child: Text(''),
+              child: const Text(''),
             ),
           ),
           thumb

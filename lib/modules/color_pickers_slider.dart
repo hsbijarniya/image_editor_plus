@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'colors_picker.dart';
 
 class ColorPickersSlider extends StatefulWidget {
+  const ColorPickersSlider({Key? key}) : super(key: key);
+
   @override
   _ColorPickersSliderState createState() => _ColorPickersSliderState();
 }
@@ -11,26 +12,24 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
             topRight: Radius.circular(10), topLeft: Radius.circular(10)),
       ),
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       height: 240,
       child: Column(
         children: [
           Center(
             child: Text(
               'Slider Filter Color'.toUpperCase(),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
-          Divider(
-              // height: 1,
-              ),
-          SizedBox(height: 20),
-          Text('Slider Color', style: TextStyle(color: Colors.white)),
-          //   SizedBox(height:10),
+          const Divider(),
+          const SizedBox(height: 20),
+          const Text('Slider Color', style: TextStyle(color: Colors.white)),
+          // const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -38,7 +37,7 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
                   width: 300,
                   thumbColor: Colors.white,
                   cornerRadius: 10,
-                  pickMode: PickMode.Color,
+                  pickMode: PickMode.color,
                   colorListener: (int value) {
                     setState(() {
                       //  currentColor = Color(value);
@@ -48,13 +47,14 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
               ),
               TextButton(
                 onPressed: () {},
-                child: Text('Reset', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('Reset', style: TextStyle(color: Colors.white)),
               )
             ],
           ),
-          SizedBox(height: 5),
-          Text('Slider Opicity', style: TextStyle(color: Colors.white)),
-          SizedBox(height: 10),
+          const SizedBox(height: 5),
+          const Text('Slider Opicity', style: TextStyle(color: Colors.white)),
+          const SizedBox(height: 10),
           Row(children: [
             Expanded(
               child: Slider(
@@ -66,7 +66,7 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
             ),
             TextButton(
               onPressed: () {},
-              child: Text('Reset', style: TextStyle(color: Colors.white)),
+              child: const Text('Reset', style: TextStyle(color: Colors.white)),
             )
           ]),
         ],

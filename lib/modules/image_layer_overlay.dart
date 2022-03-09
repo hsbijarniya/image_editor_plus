@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
-import '../image_editor_plus.dart';
+import 'package:image_editor_plus/data/layer.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
 
-class EmojiOverlay extends StatefulWidget {
+class ImageLayerOverlay extends StatefulWidget {
   final int index;
-  final Map mapValue;
+  final ImageLayerData layerData;
   final Function onUpdate;
 
-  const EmojiOverlay({
+  const ImageLayerOverlay({
     Key? key,
-    required this.mapValue,
+    required this.layerData,
     required this.index,
     required this.onUpdate,
   }) : super(key: key);
 
   @override
-  _EmojiOverlayState createState() => _EmojiOverlayState();
+  _ImageLayerOverlayState createState() => _ImageLayerOverlayState();
 }
 
-class _EmojiOverlayState extends State<EmojiOverlay> {
+class _ImageLayerOverlayState extends State<ImageLayerOverlay> {
+  double slider = 0.0;
+
   @override
   void initState() {
     //  slider = widget.sizevalue;
@@ -29,32 +32,31 @@ class _EmojiOverlayState extends State<EmojiOverlay> {
   Widget build(BuildContext context) {
     return Container(
       height: 200,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.black87,
         borderRadius: BorderRadius.only(
             topRight: Radius.circular(10), topLeft: Radius.circular(10)),
       ),
       child: Column(
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Center(
             child: Text(
               'Size Adjust'.toUpperCase(),
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
-          Divider(
-              // height: 1,
-              ),
+          const Divider(),
           Slider(
               activeColor: Colors.white,
               inactiveColor: Colors.grey,
-              value: layers[widget.index]['size'],
-              min: 0.0,
-              max: 100.0,
+              value: widget.layerData.scaleFactor,
+              min: 0,
+              max: 2,
+              divisions: 100,
               onChangeEnd: (v) {
                 setState(() {
-                  layers[widget.index]['size'] = v.toDouble();
+                  widget.layerData.scaleFactor = v.toDouble();
                   widget.onUpdate();
                 });
               },
@@ -62,11 +64,11 @@ class _EmojiOverlayState extends State<EmojiOverlay> {
                 setState(() {
                   slider = v;
                   // print(v.toDouble());
-                  layers[widget.index]['size'] = v.toDouble();
+                  widget.layerData.scaleFactor = v.toDouble();
                   widget.onUpdate();
                 });
               }),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(children: [
             Expanded(
               child: TextButton(
@@ -77,7 +79,7 @@ class _EmojiOverlayState extends State<EmojiOverlay> {
                   // back(context);
                   // setState(() {});
                 },
-                child: Text(
+                child: const Text(
                   'Remove',
                   style: TextStyle(color: Colors.white),
                 ),
