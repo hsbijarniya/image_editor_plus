@@ -1,6 +1,5 @@
 # Miscellaneous
 *.class
-*.lock
 *.log
 *.pyc
 *.swp
@@ -11,7 +10,6 @@
 .svn/
 
 # IntelliJ related
-*.iml
 *.ipr
 *.iws
 .idea/
