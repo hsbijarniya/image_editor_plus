@@ -1,5 +1,6 @@
 ## 0.0.9
 
+* Many features added and optimized
 * Changed signature library.
 * Deleted unused code.
 

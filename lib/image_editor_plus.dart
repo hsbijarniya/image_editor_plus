@@ -549,17 +549,19 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: widget.bottomBarColor,
-                blurRadius: 10,
-              ),
-            ],
-          ),
+      bottomNavigationBar: Container(
+        height: 86 + MediaQuery.of(context).padding.bottom,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: widget.bottomBarColor,
+          boxShadow: [
+            BoxShadow(
+              color: widget.bottomBarColor,
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: SafeArea(
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: <Widget>[
