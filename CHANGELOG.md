@@ -1,3 +1,7 @@
+## 0.1.0
+
+* Dependencies updated
+
 ## 0.0.9
 
 * Many features added and optimized

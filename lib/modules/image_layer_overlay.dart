@@ -50,13 +50,13 @@ class _ImageLayerOverlayState extends State<ImageLayerOverlay> {
           Slider(
               activeColor: Colors.white,
               inactiveColor: Colors.grey,
-              value: widget.layerData.scaleFactor,
+              value: widget.layerData.scale,
               min: 0,
               max: 2,
               divisions: 100,
               onChangeEnd: (v) {
                 setState(() {
-                  widget.layerData.scaleFactor = v.toDouble();
+                  widget.layerData.scale = v.toDouble();
                   widget.onUpdate();
                 });
               },
@@ -64,7 +64,7 @@ class _ImageLayerOverlayState extends State<ImageLayerOverlay> {
                 setState(() {
                   slider = v;
                   // print(v.toDouble());
-                  widget.layerData.scaleFactor = v.toDouble();
+                  widget.layerData.scale = v.toDouble();
                   widget.onUpdate();
                 });
               }),

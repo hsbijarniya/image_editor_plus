@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/data/layer.dart';
 
+/// Main layer
 class BackgroundLayer extends StatefulWidget {
   final BackgroundLayerData layerData;
   final VoidCallback? onUpdate;

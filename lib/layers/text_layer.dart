@@ -3,6 +3,7 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_editor_plus/modules/text_layer_overlay.dart';
 
+/// Text layer
 class TextLayer extends StatefulWidget {
   final TextLayerData layerData;
   final VoidCallback? onUpdate;

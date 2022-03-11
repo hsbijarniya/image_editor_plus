@@ -33,6 +33,7 @@ double viewportRatio = 1;
 
 List<Layer> layers = [], undoLayers = [], removedLayers = [];
 
+/// Single endpoint for MultiImageEditor & SingleImageEditor
 class ImageEditor extends StatelessWidget {
   final Uint8List? image;
   final List? images;

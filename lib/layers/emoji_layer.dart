@@ -3,6 +3,7 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_editor_plus/modules/emoji_layer_overlay.dart';
 
+/// Emoji layer
 class EmojiLayer extends StatefulWidget {
   final EmojiLayerData layerData;
   final VoidCallback? onUpdate;

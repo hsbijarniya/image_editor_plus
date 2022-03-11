@@ -3,6 +3,7 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_editor_plus/modules/image_layer_overlay.dart';
 
+/// Image layer that can be used to add overlay images and drawings
 class ImageLayer extends StatefulWidget {
   final ImageLayerData layerData;
   final VoidCallback? onUpdate;
@@ -58,7 +59,7 @@ class _ImageLayerState extends State<ImageLayer> {
               widget.layerData.offset.dy + detail.focalPointDelta.dy,
             );
           } else if (detail.pointerCount == 2) {
-            widget.layerData.scaleFactor = detail.scale;
+            widget.layerData.scale = detail.scale;
           }
 
           setState(() {});
@@ -80,7 +81,7 @@ class _ImageLayerState extends State<ImageLayer> {
             0,
             1,
             0,
-            1 / widget.layerData.scaleFactor,
+            1 / widget.layerData.scale,
           ),
           child: SizedBox(
             width: widget.layerData.image.width.toDouble(),
