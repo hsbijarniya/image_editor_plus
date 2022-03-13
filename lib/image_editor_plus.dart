@@ -32,6 +32,12 @@ late Size viewportSize;
 double viewportRatio = 1;
 
 List<Layer> layers = [], undoLayers = [], removedLayers = [];
+Map<String, String> _translations = {
+  // 'Slider Filter Color': 'Slider Filter Color',
+};
+
+String i18n(String sourceString) =>
+    _translations[sourceString.toLowerCase()] ?? sourceString;
 
 /// Single endpoint for MultiImageEditor & SingleImageEditor
 class ImageEditor extends StatelessWidget {
@@ -84,6 +90,12 @@ class ImageEditor extends StatelessWidget {
         allowGallery: allowGallery,
       );
     }
+  }
+
+  static i18n(Map<String, String> translations) {
+    translations.forEach((key, value) {
+      _translations[key.toLowerCase()] = value;
+    });
   }
 }
 
@@ -712,14 +724,14 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               children: [
                                 Center(
                                     child: Text(
-                                  'Slider Filter Color'.toUpperCase(),
+                                  i18n('Slider Filter Color').toUpperCase(),
                                   style: const TextStyle(color: white),
                                 )),
                                 const Divider(),
                                 const SizedBox(height: 20.0),
-                                const Text(
-                                  'Slider Color',
-                                  style: TextStyle(color: white),
+                                Text(
+                                  i18n('Slider Color'),
+                                  style: const TextStyle(color: white),
                                 ),
                                 const SizedBox(height: 10),
                                 Row(children: [
@@ -739,8 +751,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                     ),
                                   ),
                                   TextButton(
-                                    child: const Text('Reset',
-                                        style: TextStyle(color: white)),
+                                    child: Text(i18n('Reset'),
+                                        style: const TextStyle(color: white)),
                                     onPressed: () {
                                       setState(() {
                                         setS(() {
@@ -751,9 +763,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                   )
                                 ]),
                                 const SizedBox(height: 5.0),
-                                const Text(
-                                  'Blur Radius',
-                                  style: TextStyle(color: white),
+                                Text(
+                                  i18n('Blur Radius'),
+                                  style: const TextStyle(color: white),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Row(children: [
@@ -774,8 +786,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                     ),
                                   ),
                                   TextButton(
-                                    child: const Text('Reset',
-                                        style: TextStyle(color: white)),
+                                    child: Text(i18n('Reset'),
+                                        style: const TextStyle(color: white)),
                                     onPressed: () {
                                       setS(() {
                                         setState(() {
@@ -786,9 +798,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                   )
                                 ]),
                                 const SizedBox(height: 5.0),
-                                const Text(
-                                  'Color Opacity',
-                                  style: TextStyle(color: white),
+                                Text(
+                                  i18n('Color Opacity'),
+                                  style: const TextStyle(color: white),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Row(children: [
@@ -809,9 +821,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                     ),
                                   ),
                                   TextButton(
-                                    child: const Text(
-                                      'Reset',
-                                      style: TextStyle(color: white),
+                                    child: Text(
+                                      i18n('Reset'),
+                                      style: const TextStyle(color: white),
                                     ),
                                     onPressed: () {
                                       setS(() {
@@ -941,7 +953,7 @@ class BottomButton extends StatelessWidget {
           Icon(icon, color: white),
           const SizedBox(height: 8),
           Text(
-            text,
+            i18n(text),
             style: const TextStyle(color: white),
           ),
         ],
@@ -1179,7 +1191,7 @@ class _ImageCropperState extends State<ImageCropper> {
         setState(() {});
       },
       child: Text(
-        title,
+        i18n(title),
         style: TextStyle(
           color: aspectRatioOriginal == ratio ? white : gray,
         ),
@@ -1319,7 +1331,7 @@ class _ImageFiltersState extends State<ImageFilters> {
           ),
         ),
       ),
-      Text(name, style: const TextStyle(color: white, fontSize: 12)),
+      Text(i18n(name), style: const TextStyle(color: white, fontSize: 12)),
     ]).onTap(() {
       selectedFilter = filter;
       setState(() {});

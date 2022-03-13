@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/data/data.dart';
 import 'package:image_editor_plus/data/layer.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
 
 class Emojies extends StatefulWidget {
   const Emojies({Key? key}) : super(key: key);
@@ -31,10 +32,10 @@ class _EmojiesState extends State<Emojies> {
       child: Column(
         children: [
           const SizedBox(height: 16),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(
-              'Select Emoji',
-              style: TextStyle(color: Colors.white),
+              i18n('Select Emoji'),
+              style: const TextStyle(color: Colors.white),
             ),
           ]),
           const Divider(height: 1),

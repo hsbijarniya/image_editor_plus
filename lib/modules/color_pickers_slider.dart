@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
 import 'colors_picker.dart';
 
 class ColorPickersSlider extends StatefulWidget {
@@ -22,13 +23,14 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
         children: [
           Center(
             child: Text(
-              'Slider Filter Color'.toUpperCase(),
+              i18n('Slider Filter Color').toUpperCase(),
               style: const TextStyle(color: Colors.white),
             ),
           ),
           const Divider(),
           const SizedBox(height: 20),
-          const Text('Slider Color', style: TextStyle(color: Colors.white)),
+          Text(i18n('Slider Color'),
+              style: const TextStyle(color: Colors.white)),
           // const SizedBox(height: 10),
           Row(
             children: [
@@ -47,13 +49,14 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
               ),
               TextButton(
                 onPressed: () {},
-                child:
-                    const Text('Reset', style: TextStyle(color: Colors.white)),
+                child: Text(i18n('Reset'),
+                    style: const TextStyle(color: Colors.white)),
               )
             ],
           ),
           const SizedBox(height: 5),
-          const Text('Slider Opicity', style: TextStyle(color: Colors.white)),
+          Text(i18n('Slider Opicity'),
+              style: const TextStyle(color: Colors.white)),
           const SizedBox(height: 10),
           Row(children: [
             Expanded(
@@ -66,7 +69,8 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text('Reset', style: TextStyle(color: Colors.white)),
+              child: Text(i18n('Reset'),
+                  style: const TextStyle(color: Colors.white)),
             )
           ]),
         ],

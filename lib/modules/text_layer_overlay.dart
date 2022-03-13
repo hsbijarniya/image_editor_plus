@@ -44,7 +44,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
           const SizedBox(height: 10),
           Center(
             child: Text(
-              'Size Adjust'.toUpperCase(),
+              i18n('Size Adjust').toUpperCase(),
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -77,7 +77,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(height: 20),
-              const Text('Color', style: TextStyle(color: Colors.white))
+              Text(i18n('Color'), style: const TextStyle(color: Colors.white))
                   .paddingLeft(16),
               Row(children: [
                 const SizedBox(width: 8),
@@ -103,14 +103,14 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                       widget.onUpdate();
                     });
                   },
-                  child: const Text('Reset',
-                      style: TextStyle(color: Colors.white)),
+                  child: Text(i18n('Reset'),
+                      style: const TextStyle(color: Colors.white)),
                 ),
                 const SizedBox(width: 16),
               ]),
               const SizedBox(height: 20),
-              const Text('Background Color',
-                      style: TextStyle(color: Colors.white))
+              Text(i18n('Background Color'),
+                      style: const TextStyle(color: Colors.white))
                   .paddingLeft(16),
               Row(children: [
                 const SizedBox(width: 8),
@@ -136,15 +136,18 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                       widget.onUpdate();
                     });
                   },
-                  child: const Text('Reset',
-                      style: TextStyle(color: Colors.white)),
+                  child: Text(
+                    i18n('Reset'),
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
                 const SizedBox(width: 16),
               ]),
               const SizedBox(height: 20),
-              const Text('Background Opacity',
-                      style: TextStyle(color: Colors.white))
-                  .paddingLeft(16),
+              Text(
+                i18n('Background Opacity'),
+                style: const TextStyle(color: Colors.white),
+              ).paddingLeft(16),
               Row(children: [
                 const SizedBox(width: 8),
                 Expanded(
@@ -169,8 +172,10 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                       widget.onUpdate();
                     });
                   },
-                  child: const Text('Reset',
-                      style: TextStyle(color: Colors.white)),
+                  child: Text(
+                    i18n('Reset'),
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
                 const SizedBox(width: 16),
               ]),
@@ -188,9 +193,9 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                   // back(context);
                   // setState(() {});
                 },
-                child: const Text(
-                  'Remove',
-                  style: TextStyle(color: Colors.white),
+                child: Text(
+                  i18n('Remove'),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_editor_plus/data/layer.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import 'colors_picker.dart';
@@ -109,7 +110,10 @@ class _TextEditorImageState extends State<TextEditorImage> {
                 child: Column(
                   children: [
                     //   SizedBox(height: 20.0),
-                    const Text('Slider Color', style: TextStyle(color: white)),
+                    Text(
+                      i18n('Slider Color'),
+                      style: const TextStyle(color: white),
+                    ),
                     //   SizedBox(height: 10.0),
                     Row(children: [
                       Expanded(
@@ -127,13 +131,17 @@ class _TextEditorImageState extends State<TextEditorImage> {
                       ),
                       TextButton(
                         onPressed: () {},
-                        child:
-                            const Text('Reset', style: TextStyle(color: white)),
+                        child: Text(
+                          i18n('Reset'),
+                          style: const TextStyle(color: white),
+                        ),
                       ),
                     ]),
                     //   SizedBox(height: 20.0),
-                    const Text('Slider White Black Color',
-                        style: TextStyle(color: white)),
+                    Text(
+                      i18n('Slider White Black Color'),
+                      style: const TextStyle(color: white),
+                    ),
                     //   SizedBox(height: 10.0),
                     Row(children: [
                       Expanded(
@@ -151,8 +159,10 @@ class _TextEditorImageState extends State<TextEditorImage> {
                       ),
                       TextButton(
                         onPressed: () {},
-                        child:
-                            const Text('Reset', style: TextStyle(color: white)),
+                        child: Text(
+                          i18n('Reset'),
+                          style: const TextStyle(color: white),
+                        ),
                       )
                     ]),
                     Container(
@@ -162,7 +172,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
                           const SizedBox(height: 10.0),
                           Center(
                             child: Text(
-                              'Size Adjust'.toUpperCase(),
+                              i18n('Size Adjust').toUpperCase(),
                               style: const TextStyle(color: Colors.white),
                             ),
                           ),

@@ -45,6 +45,18 @@ Or in text format add the key:
 No configuration required - the plugin should work out of the box.
 
 
+### Language translation
+
+```dart
+// before using image editor
+ImageEditor.i18n({
+    'Remove': 'हटा दीजिये',
+    'Save': 'सहेजें',
+    'Slider Filter Color': 'स्लाइडर फिल्टर का रंग',
+});
+```
+
+
 ### Example - Full Editor
 
 ```dart

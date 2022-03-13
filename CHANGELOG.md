@@ -1,5 +1,9 @@
 ## 0.1.0
 
+* Language translation feature added
+
+## 0.1.0
+
 * Dependencies updated
 
 ## 0.0.9

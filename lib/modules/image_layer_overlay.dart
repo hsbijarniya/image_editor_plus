@@ -42,7 +42,7 @@ class _ImageLayerOverlayState extends State<ImageLayerOverlay> {
           const SizedBox(height: 10),
           Center(
             child: Text(
-              'Size Adjust'.toUpperCase(),
+              i18n('Size Adjust').toUpperCase(),
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -79,9 +79,9 @@ class _ImageLayerOverlayState extends State<ImageLayerOverlay> {
                   // back(context);
                   // setState(() {});
                 },
-                child: const Text(
-                  'Remove',
-                  style: TextStyle(color: Colors.white),
+                child: Text(
+                  i18n('Remove'),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),
