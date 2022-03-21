@@ -70,7 +70,7 @@ packages:
       name: colorfilter_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.7"
+    version: "0.0.8"
   connectivity_plus:
     dependency: transitive
     description:
@@ -154,7 +154,7 @@ packages:
       name: extended_image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.1"
+    version: "6.0.2+1"
   extended_image_library:
     dependency: transitive
     description:
@@ -351,7 +351,7 @@ packages:
       name: nb_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.4.12"
+    version: "4.4.13"
   nm:
     dependency: transitive
     description:
