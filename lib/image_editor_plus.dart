@@ -896,6 +896,27 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                     setState(() {});
                   },
                 ),
+                BottomButton(
+                  icon: FontAwesomeIcons.pizzaSlice,
+                  text: 'Sticker',
+                  onTap: () async {
+                    EmojiLayerData? layer = await showModalBottomSheet(
+                      context: context,
+                      backgroundColor: black,
+                      builder: (BuildContext context) {
+                        return const Emojies();
+                      },
+                    );
+
+                    if (layer == null) return;
+
+                    undoLayers.clear();
+                    removedLayers.clear();
+                    layers.add(layer);
+
+                    setState(() {});
+                  },
+                ),
               ],
             ),
           ),
