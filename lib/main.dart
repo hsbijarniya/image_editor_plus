@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 
@@ -50,22 +52,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Uint8List? imageData;
 
   void _incrementCounter() async {
-     var editedImage = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageEditor(
-                    allowGallery: true,
-                  ),
-                ),
-              );
+    var editedImage = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ImageEditor(
+          allowGallery: true,
+        ),
+      ),
+    );
 
-              // replace with edited image
-              if (editedImage != null) {
-                setState(() {});
-              }
-	// setState(() {
+    // replace with edited image
+    if (editedImage != null) {
+      setState(() {
+		imageData = editedImage;
+	  });
+    }
+    // setState(() {
     //   _counter++;
     // });
   }
@@ -97,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+			imageData != null ? Image.memory(imageData!) : const SizedBox.shrink()
           ],
         ),
       ),
