@@ -24,6 +24,7 @@ class ImageItem {
     dynamic decodedImage;
 
     if (imageFile is ImageItem) {
+      print("ImageItem::1");
       height = imageFile.height;
       width = imageFile.width;
 
@@ -32,9 +33,11 @@ class ImageItem {
 
       loader.complete(true);
     } else if (imageFile is File || imageFile is XFile) {
+      print("ImageItem::2");
       image = await imageFile.readAsBytes();
       decodedImage = await decodeImageFromList(image);
     } else {
+      print("ImageItem::3");
       image = imageFile;
       decodedImage = await decodeImageFromList(imageFile);
     }
@@ -48,7 +51,7 @@ class ImageItem {
       width = decodedImage.width;
       viewportRatio = viewportSize.height / height;
 
-      loader.complete(true);
+      loader.complete(decodedImage);
     }
 
     return true;
