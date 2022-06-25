@@ -1532,7 +1532,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             image: DecorationImage(
                 image: Image.memory(widget.image).image, fit: BoxFit.contain),
           ),
-          child: HandSignaturePainterView(
+          child: HandSignature(
             control: control,
             color: currentColor,
             width: 1.0,

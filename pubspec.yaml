@@ -27,7 +27,7 @@ dependencies:
     image: ^3.1.1
     image_editor: ^1.0.2
     colorfilter_generator: ^0.0.6
-    hand_signature: ^2.1.1
+    hand_signature: ^2.3.0
 
 dev_dependencies:
     flutter_test:

@@ -246,7 +246,7 @@ packages:
       name: hand_signature
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.3.0"
   http:
     dependency: transitive
     description:
@@ -365,7 +365,7 @@ packages:
       name: nb_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.1"
+    version: "4.6.5"
   nm:
     dependency: transitive
     description:
