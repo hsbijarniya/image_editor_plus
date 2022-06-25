@@ -14,7 +14,7 @@ class TextEditorImage extends StatefulWidget {
 
 class _TextEditorImageState extends State<TextEditorImage> {
   TextEditingController name = TextEditingController();
-  Color currentColor = Colors.black;
+  Color currentColor = Colors.white;
   double slider = 32.0;
   TextAlign align = TextAlign.left;
 
@@ -23,7 +23,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
     var size = MediaQuery.of(context).size;
 
     return Theme(
-      data: ImageEditor.theme,
+      data: ThemeData.dark(),
       child: Scaffold(
         appBar: AppBar(
           actions: <Widget>[
@@ -74,7 +74,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
                   ),
                 );
               },
-              color: Colors.black,
+              color: Colors.white,
               padding: const EdgeInsets.all(15),
             )
           ],
@@ -98,8 +98,8 @@ class _TextEditorImageState extends State<TextEditorImage> {
                     keyboardType: TextInputType.multiline,
                     minLines: 5,
                     maxLines: 99999,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: currentColor,
                     ),
                     autofocus: true,
                   ),
