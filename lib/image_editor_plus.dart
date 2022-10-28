@@ -2,7 +2,9 @@ library image_editor_plus;
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
+
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:colorfilter_generator/presets.dart';
 import 'package:extended_image/extended_image.dart';
@@ -17,15 +19,15 @@ import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/layers/background_blur_layer.dart';
 import 'package:image_editor_plus/layers/background_layer.dart';
-import 'package:image_editor_plus/layers/image_layer.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/layers/emoji_layer.dart';
-import 'package:image_editor_plus/modules/text.dart';
+import 'package:image_editor_plus/layers/image_layer.dart';
 import 'package:image_editor_plus/layers/text_layer.dart';
+import 'package:image_editor_plus/modules/all_emojies.dart';
+import 'package:image_editor_plus/modules/text.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:screenshot/screenshot.dart';
-import 'dart:math' as math;
+
 import 'modules/colors_picker.dart';
 
 late Size viewportSize;
@@ -850,6 +852,15 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   onTap: () async {
                     resetTransformation();
 
+                    /// Use case: if you don't want to stack your filter, use
+                    /// this logic. Along with code on line 888 and
+                    /// remove line 889
+                    // for (int i = 1; i < layers.length; i++) {
+                    //   if (layers[i] is BackgroundLayerData) {
+                    //     layers.removeAt(i);
+                    //     break;
+                    //   }
+                    // }
                     var data = await screenshotController.capture(
                         pixelRatio: pixelRatio);
 
@@ -871,6 +882,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       file: ImageItem(editedImage),
                     );
 
+                    /// Use case, if you don't want your filter to effect your
+                    /// other elements such as emoji and text. Use insert
+                    /// instead of add like in line 888
+                    //layers.insert(1, layer);
                     layers.add(layer);
 
                     await layer.file.status;
@@ -1239,7 +1254,8 @@ class _ImageFiltersState extends State<ImageFilters> {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () async {
-                Navigator.pop(context, filterAppliedImage);
+                var data = await screenshotController.capture();
+                Navigator.pop(context, data);
               },
             ).paddingSymmetric(horizontal: 8),
           ],
@@ -1584,6 +1600,7 @@ class ColorButton extends StatelessWidget {
   final Color color;
   final Function onTap;
   final bool isSelected;
+
   const ColorButton({
     Key? key,
     required this.color,
