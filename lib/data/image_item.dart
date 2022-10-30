@@ -48,7 +48,7 @@ class ImageItem {
       width = decodedImage.width;
       viewportRatio = viewportSize.height / height;
 
-      loader.complete(true);
+      loader.complete(decodedImage);
     }
 
     return true;

@@ -382,7 +382,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
             if (image == null) return;
 
-            await currentImage.load(image);
+            loadImage(image);
           },
         ).paddingSymmetric(horizontal: 8),
       if (widget.allowCamera)
@@ -393,7 +393,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
             if (image == null) return;
 
-            await currentImage.load(image);
+            loadImage(image);
           },
         ).paddingSymmetric(horizontal: 8),
       IconButton(
@@ -563,13 +563,17 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         ),
         bottomNavigationBar: Container(
+			// color: Colors.black45,
+          alignment: Alignment.bottomCenter,
           height: 86 + MediaQuery.of(context).padding.bottom,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(blurRadius: 10),
-            ],
-          ),
+            decoration: const BoxDecoration(
+				color: Colors.black87,
+				shape: BoxShape.rectangle,
+            //   boxShadow: [
+            //     BoxShadow(blurRadius: 1),
+            //   ],
+            ),
           child: SafeArea(
             child: ListView(
               scrollDirection: Axis.horizontal,
@@ -707,128 +711,138 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setS) {
-                            return Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(10),
-                                    topLeft: Radius.circular(10)),
-                              ),
-                              padding: const EdgeInsets.all(20),
-                              height: 400,
-                              child: Column(
-                                children: [
-                                  Center(
-                                      child: Text(
-                                    i18n('Slider Filter Color').toUpperCase(),
-                                  )),
-                                  const Divider(),
-                                  const SizedBox(height: 20.0),
-                                  Text(
-                                    i18n('Slider Color'),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(children: [
-                                    Expanded(
-                                      child: BarColorPicker(
-                                        width: 300,
-                                        thumbColor: white,
-                                        cornerRadius: 10,
-                                        pickMode: PickMode.color,
-                                        colorListener: (int value) {
-                                          setS(() {
-                                            setState(() {
-                                              blurLayer.color = Color(value);
-                                            });
-                                          });
-                                        },
-                                      ),
+                            return SingleChildScrollView(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black87,
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10)),
+                                ),
+                                padding: const EdgeInsets.all(20),
+                                height: 400,
+                                child: Column(
+                                  children: [
+                                    Center(
+                                        child: Text(
+                                      i18n('Slider Filter Color').toUpperCase(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    )),
+                                    const Divider(),
+                                    const SizedBox(height: 20.0),
+                                    Text(
+                                      i18n('Slider Color'),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
-                                    TextButton(
-                                      child: Text(
-                                        i18n('Reset'),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          setS(() {
-                                            blurLayer.color =
-                                                Colors.transparent;
-                                          });
-                                        });
-                                      },
-                                    )
-                                  ]),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                    i18n('Blur Radius'),
-                                  ),
-                                  const SizedBox(height: 10.0),
-                                  Row(children: [
-                                    Expanded(
-                                      child: Slider(
-                                        activeColor: white,
-                                        inactiveColor: Colors.grey,
-                                        value: blurLayer.radius,
-                                        min: 0.0,
-                                        max: 10.0,
-                                        onChanged: (v) {
-                                          setS(() {
-                                            setState(() {
-                                              blurLayer.radius = v;
+                                    const SizedBox(height: 10),
+                                    Row(children: [
+                                      Expanded(
+                                        child: BarColorPicker(
+                                          width: 300,
+                                          thumbColor: white,
+                                          cornerRadius: 10,
+                                          pickMode: PickMode.color,
+                                          colorListener: (int value) {
+                                            setS(() {
+                                              setState(() {
+                                                blurLayer.color = Color(value);
+                                              });
                                             });
-                                          });
-                                        },
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                    TextButton(
-                                      child: Text(
-                                        i18n('Reset'),
-                                      ),
-                                      onPressed: () {
-                                        setS(() {
+                                      TextButton(
+                                        child: Text(
+                                          i18n('Reset'),
+                                        ),
+                                        onPressed: () {
                                           setState(() {
-                                            blurLayer.color = Colors.white;
-                                          });
-                                        });
-                                      },
-                                    )
-                                  ]),
-                                  const SizedBox(height: 5.0),
-                                  Text(
-                                    i18n('Color Opacity'),
-                                  ),
-                                  const SizedBox(height: 10.0),
-                                  Row(children: [
-                                    Expanded(
-                                      child: Slider(
-                                        activeColor: white,
-                                        inactiveColor: Colors.grey,
-                                        value: blurLayer.opacity,
-                                        min: 0.00,
-                                        max: 1.0,
-                                        onChanged: (v) {
-                                          setS(() {
-                                            setState(() {
-                                              blurLayer.opacity = v;
+                                            setS(() {
+                                              blurLayer.color =
+                                                  Colors.transparent;
                                             });
                                           });
                                         },
-                                      ),
+                                      )
+                                    ]),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                      i18n('Blur Radius'),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
-                                    TextButton(
-                                      child: Text(
-                                        i18n('Reset'),
+                                    const SizedBox(height: 10.0),
+                                    Row(children: [
+                                      Expanded(
+                                        child: Slider(
+                                          activeColor: white,
+                                          inactiveColor: Colors.grey,
+                                          value: blurLayer.radius,
+                                          min: 0.0,
+                                          max: 10.0,
+                                          onChanged: (v) {
+                                            setS(() {
+                                              setState(() {
+                                                blurLayer.radius = v;
+                                              });
+                                            });
+                                          },
+                                        ),
                                       ),
-                                      onPressed: () {
-                                        setS(() {
-                                          setState(() {
-                                            blurLayer.opacity = 0.0;
+                                      TextButton(
+                                        child: Text(
+                                          i18n('Reset'),
+                                        ),
+                                        onPressed: () {
+                                          setS(() {
+                                            setState(() {
+                                              blurLayer.color = Colors.white;
+                                            });
                                           });
-                                        });
-                                      },
-                                    )
-                                  ]),
-                                ],
+                                        },
+                                      )
+                                    ]),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                      i18n('Color Opacity'),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                    const SizedBox(height: 10.0),
+                                    Row(children: [
+                                      Expanded(
+                                        child: Slider(
+                                          activeColor: white,
+                                          inactiveColor: Colors.grey,
+                                          value: blurLayer.opacity,
+                                          min: 0.00,
+                                          max: 1.0,
+                                          onChanged: (v) {
+                                            setS(() {
+                                              setState(() {
+                                                blurLayer.opacity = v;
+                                              });
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      TextButton(
+                                        child: Text(
+                                          i18n('Reset'),
+                                        ),
+                                        onPressed: () {
+                                          setS(() {
+                                            setState(() {
+                                              blurLayer.opacity = 0.0;
+                                            });
+                                          });
+                                        },
+                                      )
+                                    ]),
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -960,6 +974,7 @@ class BottomButton extends StatelessWidget {
         children: [
           Icon(
             icon,
+			color: Colors.white,
           ),
           const SizedBox(height: 8),
           Text(
@@ -1531,7 +1546,11 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: currentColor == black ? white : black,
+          decoration: BoxDecoration(
+            color: currentColor == black ? white : black,
+            image: DecorationImage(
+                image: Image.memory(widget.image).image, fit: BoxFit.contain),
+          ),
           child: HandSignature(
             control: control,
             color: currentColor,
@@ -1545,7 +1564,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             height: 80,
             decoration: const BoxDecoration(
               boxShadow: [
-                BoxShadow(blurRadius: 10),
+                BoxShadow(blurRadius: 2),
               ],
             ),
             child: ListView(
