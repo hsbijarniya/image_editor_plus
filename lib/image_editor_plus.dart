@@ -2,7 +2,9 @@ library image_editor_plus;
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
+
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:colorfilter_generator/presets.dart';
 import 'package:extended_image/extended_image.dart';
@@ -17,15 +19,15 @@ import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/layers/background_blur_layer.dart';
 import 'package:image_editor_plus/layers/background_layer.dart';
-import 'package:image_editor_plus/layers/image_layer.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/layers/emoji_layer.dart';
-import 'package:image_editor_plus/modules/text.dart';
+import 'package:image_editor_plus/layers/image_layer.dart';
 import 'package:image_editor_plus/layers/text_layer.dart';
+import 'package:image_editor_plus/modules/all_emojies.dart';
+import 'package:image_editor_plus/modules/text.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:screenshot/screenshot.dart';
-import 'dart:math' as math;
+
 import 'modules/colors_picker.dart';
 
 late Size viewportSize;
@@ -92,6 +94,7 @@ class ImageEditor extends StatelessWidget {
 
   /// Set custom theme properties default is dark theme with white text
   static ThemeData theme = ThemeData(
+    scaffoldBackgroundColor: Colors.black,
     backgroundColor: Colors.black,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.black87,
@@ -102,6 +105,9 @@ class ImageEditor extends StatelessWidget {
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.black,
+    ),
+    iconTheme: const IconThemeData(
+      color: Colors.white,
     ),
     textTheme: const TextTheme(
       bodyMedium: TextStyle(color: Colors.white),
@@ -496,60 +502,59 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           automaticallyImplyLeading: false,
           actions: filterActions,
         ),
-        body: Center(
-          child: SizedBox(
-            height: currentImage.height / pixelRatio,
-            width: currentImage.width / pixelRatio,
-            child: Screenshot(
-              controller: screenshotController,
-              child: RotatedBox(
-                quarterTurns: rotateValue,
-                child: Transform(
-                  transform: Matrix4(
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    x,
-                    y,
-                    0,
-                    1 / scaleFactor,
-                  )..rotateY(flipValue),
-                  alignment: FractionalOffset.center,
-                  child: GestureDetector(
-                    onScaleUpdate: (details) {
-                      // print(details);
+        body: GestureDetector(
+          onScaleUpdate: (details) {
+            // print(details);
 
-                      // move
-                      if (details.pointerCount == 1) {
-                        // print(details.focalPointDelta);
-                        x += details.focalPointDelta.dx;
-                        y += details.focalPointDelta.dy;
-                        setState(() {});
-                      }
+            // move
+            if (details.pointerCount == 1) {
+              // print(details.focalPointDelta);
+              x += details.focalPointDelta.dx;
+              y += details.focalPointDelta.dy;
+              setState(() {});
+            }
 
-                      // scale
-                      if (details.pointerCount == 2) {
-                        // print([details.horizontalScale, details.verticalScale]);
-                        if (details.horizontalScale != 1) {
-                          scaleFactor = lastScaleFactor *
-                              math.min(details.horizontalScale,
-                                  details.verticalScale);
-                          setState(() {});
-                        }
-                      }
-                    },
-                    onScaleEnd: (details) {
-                      lastScaleFactor = scaleFactor;
-                    },
+            // scale
+            if (details.pointerCount == 2) {
+              // print([details.horizontalScale, details.verticalScale]);
+              if (details.horizontalScale != 1) {
+                scaleFactor = lastScaleFactor *
+                    math.min(details.horizontalScale, details.verticalScale);
+                setState(() {});
+              }
+            }
+          },
+          onScaleEnd: (details) {
+            lastScaleFactor = scaleFactor;
+          },
+          child: Center(
+            child: SizedBox(
+              height: currentImage.height / pixelRatio,
+              width: currentImage.width / pixelRatio,
+              child: Screenshot(
+                controller: screenshotController,
+                child: RotatedBox(
+                  quarterTurns: rotateValue,
+                  child: Transform(
+                    transform: Matrix4(
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      1,
+                      0,
+                      0,
+                      0,
+                      0,
+                      1,
+                      0,
+                      x,
+                      y,
+                      0,
+                      1 / scaleFactor,
+                    )..rotateY(flipValue),
+                    alignment: FractionalOffset.center,
                     child: layersStack,
                   ),
                 ),
@@ -861,6 +866,15 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   onTap: () async {
                     resetTransformation();
 
+                    /// Use case: if you don't want to stack your filter, use
+                    /// this logic. Along with code on line 888 and
+                    /// remove line 889
+                    // for (int i = 1; i < layers.length; i++) {
+                    //   if (layers[i] is BackgroundLayerData) {
+                    //     layers.removeAt(i);
+                    //     break;
+                    //   }
+                    // }
                     var data = await screenshotController.capture(
                         pixelRatio: pixelRatio);
 
@@ -882,6 +896,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       file: ImageItem(editedImage),
                     );
 
+                    /// Use case, if you don't want your filter to effect your
+                    /// other elements such as emoji and text. Use insert
+                    /// instead of add like in line 888
+                    //layers.insert(1, layer);
                     layers.add(layer);
 
                     await layer.file.status;
@@ -890,7 +908,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   },
                 ),
                 BottomButton(
-                  icon: FontAwesomeIcons.smile,
+                  icon: FontAwesomeIcons.faceSmile,
                   text: 'Emoji',
                   onTap: () async {
                     EmojiLayerData? layer = await showModalBottomSheet(
@@ -1251,7 +1269,8 @@ class _ImageFiltersState extends State<ImageFilters> {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () async {
-                Navigator.pop(context, filterAppliedImage);
+                var data = await screenshotController.capture();
+                Navigator.pop(context, data);
               },
             ).paddingSymmetric(horizontal: 8),
           ],
@@ -1532,6 +1551,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             image: DecorationImage(
                 image: Image.memory(widget.image).image, fit: BoxFit.contain),
           ),
+          color: currentColor == black ? white : black,
           child: HandSignature(
             control: control,
             color: currentColor,
@@ -1600,6 +1620,7 @@ class ColorButton extends StatelessWidget {
   final Color color;
   final Function onTap;
   final bool isSelected;
+
   const ColorButton({
     Key? key,
     required this.color,

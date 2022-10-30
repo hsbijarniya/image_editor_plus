@@ -1,4 +1,20 @@
-## 0.1.0
+## 0.1.5
+
+* Dependencies updated
+
+## 0.1.4
+
+* Bug fixes
+
+## 0.1.3
+
+* Dependencies updated
+
+## 0.1.2
+
+* Theme can be provided by using ImageEditor.theme = ThemeData(...)
+
+## 0.1.1
 
 * Language translation feature added
 
