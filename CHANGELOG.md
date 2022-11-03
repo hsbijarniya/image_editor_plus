@@ -1,3 +1,8 @@
+## 0.1.6
+
+* Pull request merged
+* Dependencies updated
+
 ## 0.1.5
 
 * Dependencies updated

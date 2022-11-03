@@ -3,8 +3,6 @@ library image_editor_plus;
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:typed_data';
-
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:colorfilter_generator/presets.dart';
 import 'package:extended_image/extended_image.dart';
@@ -563,17 +561,17 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         ),
         bottomNavigationBar: Container(
-			// color: Colors.black45,
+          // color: Colors.black45,
           alignment: Alignment.bottomCenter,
           height: 86 + MediaQuery.of(context).padding.bottom,
           padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: const BoxDecoration(
-				color: Colors.black87,
-				shape: BoxShape.rectangle,
+          decoration: const BoxDecoration(
+            color: Colors.black87,
+            shape: BoxShape.rectangle,
             //   boxShadow: [
             //     BoxShadow(blurRadius: 1),
             //   ],
-            ),
+          ),
           child: SafeArea(
             child: ListView(
               scrollDirection: Axis.horizontal,
@@ -974,7 +972,7 @@ class BottomButton extends StatelessWidget {
         children: [
           Icon(
             icon,
-			color: Colors.white,
+            color: Colors.white,
           ),
           const SizedBox(height: 8),
           Text(

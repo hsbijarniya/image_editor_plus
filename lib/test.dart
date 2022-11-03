@@ -1,5 +1,4 @@
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 
 class TestEditorUI extends StatelessWidget {
@@ -8,7 +7,7 @@ class TestEditorUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SingleImageEditor(
-		allowGallery: true,
-	);
+      allowGallery: true,
+    );
   }
 }
