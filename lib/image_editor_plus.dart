@@ -161,7 +161,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
               IconButton(
                 icon: const Icon(Icons.photo),
                 onPressed: () async {
-                  var selected = await picker.pickMultiImage();
+                  List<XFile>? selected = await picker.pickMultiImage();
 
                   if (selected == null) return;
 

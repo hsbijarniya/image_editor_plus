@@ -1,3 +1,7 @@
+## 0.1.7
+
+* ImageUtils.convert & ImageUtils.convertAll methods added to convert image from one format to another.
+
 ## 0.1.6
 
 * Pull request merged
