@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:image_editor_plus/data/layer.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'package:image_editor_plus/image_editor_plus.dart';
+import './../data/layer.dart';
+import './../image_editor_plus.dart';
 import 'colors_picker.dart';
 
 class TextLayerOverlay extends StatefulWidget {
@@ -77,8 +76,11 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const SizedBox(height: 20),
-              Text(i18n('Color'), style: const TextStyle(color: Colors.white))
-                  .paddingLeft(16),
+              Padding(
+                padding: const EdgeInsets.only(left:16.0),
+                child: Text(i18n('Color'), style: const TextStyle(color: Colors.white)),
+              )
+                  ,
               Row(children: [
                 const SizedBox(width: 8),
                 Expanded(
@@ -109,9 +111,12 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                 const SizedBox(width: 16),
               ]),
               const SizedBox(height: 20),
-              Text(i18n('Background Color'),
-                      style: const TextStyle(color: Colors.white))
-                  .paddingLeft(16),
+              Padding(
+                padding: const EdgeInsets.only(left:16.0),
+                child: Text(i18n('Background Color'),
+                        style: const TextStyle(color: Colors.white)),
+              )
+                  ,
               Row(children: [
                 const SizedBox(width: 8),
                 Expanded(
@@ -144,10 +149,13 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                 const SizedBox(width: 16),
               ]),
               const SizedBox(height: 20),
-              Text(
-                i18n('Background Opacity'),
-                style: const TextStyle(color: Colors.white),
-              ).paddingLeft(16),
+              Padding(
+                padding: const EdgeInsets.only(left:16.0),
+                child: Text(
+                  i18n('Background Opacity'),
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
               Row(children: [
                 const SizedBox(width: 8),
                 Expanded(

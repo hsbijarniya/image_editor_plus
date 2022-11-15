@@ -1,8 +1,8 @@
-library image_editor_plus;
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:colorfilter_generator/presets.dart';
 import 'package:extended_image/extended_image.dart';
@@ -13,19 +13,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_signature/signature.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_editor/image_editor.dart' as image_editor;
-import 'package:image_editor_plus/data/image_item.dart';
-import 'package:image_editor_plus/data/layer.dart';
-import 'package:image_editor_plus/layers/background_blur_layer.dart';
-import 'package:image_editor_plus/layers/background_layer.dart';
-import 'package:image_editor_plus/layers/emoji_layer.dart';
-import 'package:image_editor_plus/layers/image_layer.dart';
-import 'package:image_editor_plus/layers/text_layer.dart';
-import 'package:image_editor_plus/modules/all_emojies.dart';
-import 'package:image_editor_plus/modules/text.dart';
+import './constants/colors.dart';
+import './data/image_item.dart';
+import './data/layer.dart';
+import './layers/background_blur_layer.dart';
+import './layers/background_layer.dart';
+import './layers/image_layer.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:nb_utils/nb_utils.dart';
+import './modules/all_emojies.dart';
+import './layers/emoji_layer.dart';
+import './modules/text.dart';
+import './layers/text_layer.dart';
 import 'package:screenshot/screenshot.dart';
-
+import 'dart:math' as math;
 import 'modules/colors_picker.dart';
 
 late Size viewportSize;
@@ -158,34 +158,44 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
             const BackButton(),
             const Spacer(),
             if (images.length < widget.maxLength && widget.allowGallery)
-              IconButton(
-                icon: const Icon(Icons.photo),
-                onPressed: () async {
-                  List<XFile>? selected = await picker.pickMultiImage();
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal:8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.photo),
+                  onPressed: () async {
+                    var selected = await picker.pickMultiImage();
 
-                  if (selected == null) return;
+                    // ignore: unnecessary_null_comparison
+                    if (selected == null) return;
 
-                  images.addAll(selected.map((e) => ImageItem(e)).toList());
-                },
-              ).paddingSymmetric(horizontal: 8),
+                    images.addAll(selected.map((e) => ImageItem(e)).toList());
+                  },
+                ),
+              ),
             if (images.length < widget.maxLength && widget.allowCamera)
-              IconButton(
-                icon: const Icon(Icons.camera_alt),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal:8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: () async {
+                    var selected =
+                        await picker.pickImage(source: ImageSource.camera);
+
+                    if (selected == null) return;
+
+                    images.add(ImageItem(selected));
+                  },
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: const Icon(Icons.check),
                 onPressed: () async {
-                  var selected =
-                      await picker.pickImage(source: ImageSource.camera);
-
-                  if (selected == null) return;
-
-                  images.add(ImageItem(selected));
+                  Navigator.pop(context, images);
                 },
-              ).paddingSymmetric(horizontal: 8),
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                Navigator.pop(context, images);
-              },
-            ).paddingSymmetric(horizontal: 8),
+              ),
+            ),
           ],
         ),
         body: Column(
@@ -210,14 +220,8 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             border: Border.all(color: white.withAlpha(80)),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.memory(
-                              image.image,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ).onTap(() async {
+                          child: InkWell(
+                            onTap:(() async {
                           var img = await Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -232,6 +236,16 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             setState(() {});
                           }
                         }),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.memory(
+                                image.image,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          
+                        ),
                         Positioned(
                           top: 36,
                           right: 36,
@@ -344,67 +358,82 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     return [
       const BackButton(),
       const Spacer(),
-      IconButton(
-        icon: Icon(Icons.undo,
-            color:
-                layers.length > 1 || removedLayers.isNotEmpty ? white : grey),
-        onPressed: () {
-          if (removedLayers.isNotEmpty) {
-            layers.add(removedLayers.removeLast());
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal:8.0),
+        child: IconButton(
+          icon: Icon(Icons.undo,
+              color:
+                  layers.length > 1 || removedLayers.isNotEmpty ? white : grey),
+          onPressed: () {
+            if (removedLayers.isNotEmpty) {
+              layers.add(removedLayers.removeLast());
+              setState(() {});
+              return;
+            }
+
+            if (layers.length <= 1) return; // do not remove image layer
+
+            undoLayers.add(layers.removeLast());
+
             setState(() {});
-            return;
-          }
+          },
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal:8.0),
+        child: IconButton(
+          icon: Icon(Icons.redo, color: undoLayers.isNotEmpty ? white : grey),
+          onPressed: () {
+            if (undoLayers.isEmpty) return;
 
-          if (layers.length <= 1) return; // do not remove image layer
+            layers.add(undoLayers.removeLast());
 
-          undoLayers.add(layers.removeLast());
-
-          setState(() {});
-        },
-      ).paddingSymmetric(horizontal: 8),
-      IconButton(
-        icon: Icon(Icons.redo, color: undoLayers.isNotEmpty ? white : grey),
-        onPressed: () {
-          if (undoLayers.isEmpty) return;
-
-          layers.add(undoLayers.removeLast());
-
-          setState(() {});
-        },
-      ).paddingSymmetric(horizontal: 8),
+            setState(() {});
+          },
+        ),
+      ),
       if (widget.allowGallery)
-        IconButton(
-          icon: const Icon(Icons.photo),
-          onPressed: () async {
-            var image = await picker.pickImage(source: ImageSource.gallery);
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal:8.0),
+          child: IconButton(
+            icon: const Icon(Icons.photo),
+            onPressed: () async {
+              var image = await picker.pickImage(source: ImageSource.gallery);
 
-            if (image == null) return;
+              if (image == null) return;
 
-            loadImage(image);
-          },
-        ).paddingSymmetric(horizontal: 8),
+              await currentImage.load(image);
+            },
+          ),
+        ),
       if (widget.allowCamera)
-        IconButton(
-          icon: const Icon(Icons.camera_alt),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal:8.0),
+          child: IconButton(
+            icon: const Icon(Icons.camera_alt),
+            onPressed: () async {
+              var image = await picker.pickImage(source: ImageSource.camera);
+
+              if (image == null) return;
+
+              await currentImage.load(image);
+            },
+          ),
+        ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal:8.0),
+        child: IconButton(
+          icon: const Icon(Icons.check),
           onPressed: () async {
-            var image = await picker.pickImage(source: ImageSource.camera);
+            resetTransformation();
 
-            if (image == null) return;
+            var binaryIntList =
+                await screenshotController.capture(pixelRatio: pixelRatio);
 
-            loadImage(image);
+            Navigator.pop(context, binaryIntList);
           },
-        ).paddingSymmetric(horizontal: 8),
-      IconButton(
-        icon: const Icon(Icons.check),
-        onPressed: () async {
-          resetTransformation();
-
-          var binaryIntList =
-              await screenshotController.capture(pixelRatio: pixelRatio);
-
-          Navigator.pop(context, binaryIntList);
-        },
-      ).paddingSymmetric(horizontal: 8),
+        ),
+      ),
     ];
   }
 
@@ -561,16 +590,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         ),
         bottomNavigationBar: Container(
-          // color: Colors.black45,
-          alignment: Alignment.bottomCenter,
           height: 86 + MediaQuery.of(context).padding.bottom,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: const BoxDecoration(
-            color: Colors.black87,
-            shape: BoxShape.rectangle,
-            //   boxShadow: [
-            //     BoxShadow(blurRadius: 1),
-            //   ],
+            boxShadow: [
+              BoxShadow(blurRadius: 10),
+            ],
           ),
           child: SafeArea(
             child: ListView(
@@ -709,138 +734,128 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setS) {
-                            return SingleChildScrollView(
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.black87,
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(10),
-                                      topLeft: Radius.circular(10)),
-                                ),
-                                padding: const EdgeInsets.all(20),
-                                height: 400,
-                                child: Column(
-                                  children: [
-                                    Center(
-                                        child: Text(
-                                      i18n('Slider Filter Color').toUpperCase(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    )),
-                                    const Divider(),
-                                    const SizedBox(height: 20.0),
-                                    Text(
-                                      i18n('Slider Color'),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Row(children: [
-                                      Expanded(
-                                        child: BarColorPicker(
-                                          width: 300,
-                                          thumbColor: white,
-                                          cornerRadius: 10,
-                                          pickMode: PickMode.color,
-                                          colorListener: (int value) {
-                                            setS(() {
-                                              setState(() {
-                                                blurLayer.color = Color(value);
-                                              });
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black87,
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(10),
+                                    topLeft: Radius.circular(10)),
+                              ),
+                              padding: const EdgeInsets.all(20),
+                              height: 400,
+                              child: Column(
+                                children: [
+                                  Center(
+                                      child: Text(
+                                    i18n('Slider Filter Color').toUpperCase(),
+                                  )),
+                                  const Divider(),
+                                  const SizedBox(height: 20.0),
+                                  Text(
+                                    i18n('Slider Color'),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(children: [
+                                    Expanded(
+                                      child: BarColorPicker(
+                                        width: 300,
+                                        thumbColor: white,
+                                        cornerRadius: 10,
+                                        pickMode: PickMode.color,
+                                        colorListener: (int value) {
+                                          setS(() {
+                                            setState(() {
+                                              blurLayer.color = Color(value);
                                             });
-                                          },
-                                        ),
+                                          });
+                                        },
                                       ),
-                                      TextButton(
-                                        child: Text(
-                                          i18n('Reset'),
-                                        ),
-                                        onPressed: () {
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                        i18n('Reset'),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          setS(() {
+                                            blurLayer.color =
+                                                Colors.transparent;
+                                          });
+                                        });
+                                      },
+                                    )
+                                  ]),
+                                  const SizedBox(height: 5.0),
+                                  Text(
+                                    i18n('Blur Radius'),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Row(children: [
+                                    Expanded(
+                                      child: Slider(
+                                        activeColor: white,
+                                        inactiveColor: Colors.grey,
+                                        value: blurLayer.radius,
+                                        min: 0.0,
+                                        max: 10.0,
+                                        onChanged: (v) {
+                                          setS(() {
+                                            setState(() {
+                                              blurLayer.radius = v;
+                                            });
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                        i18n('Reset'),
+                                      ),
+                                      onPressed: () {
+                                        setS(() {
                                           setState(() {
-                                            setS(() {
-                                              blurLayer.color =
-                                                  Colors.transparent;
-                                            });
+                                            blurLayer.color = Colors.white;
                                           });
-                                        },
-                                      )
-                                    ]),
-                                    const SizedBox(height: 5.0),
-                                    Text(
-                                      i18n('Blur Radius'),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                    const SizedBox(height: 10.0),
-                                    Row(children: [
-                                      Expanded(
-                                        child: Slider(
-                                          activeColor: white,
-                                          inactiveColor: Colors.grey,
-                                          value: blurLayer.radius,
-                                          min: 0.0,
-                                          max: 10.0,
-                                          onChanged: (v) {
-                                            setS(() {
-                                              setState(() {
-                                                blurLayer.radius = v;
-                                              });
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          i18n('Reset'),
-                                        ),
-                                        onPressed: () {
+                                        });
+                                      },
+                                    )
+                                  ]),
+                                  const SizedBox(height: 5.0),
+                                  Text(
+                                    i18n('Color Opacity'),
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                  Row(children: [
+                                    Expanded(
+                                      child: Slider(
+                                        activeColor: white,
+                                        inactiveColor: Colors.grey,
+                                        value: blurLayer.opacity,
+                                        min: 0.00,
+                                        max: 1.0,
+                                        onChanged: (v) {
                                           setS(() {
                                             setState(() {
-                                              blurLayer.color = Colors.white;
+                                              blurLayer.opacity = v;
                                             });
                                           });
                                         },
-                                      )
-                                    ]),
-                                    const SizedBox(height: 5.0),
-                                    Text(
-                                      i18n('Color Opacity'),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                    const SizedBox(height: 10.0),
-                                    Row(children: [
-                                      Expanded(
-                                        child: Slider(
-                                          activeColor: white,
-                                          inactiveColor: Colors.grey,
-                                          value: blurLayer.opacity,
-                                          min: 0.00,
-                                          max: 1.0,
-                                          onChanged: (v) {
-                                            setS(() {
-                                              setState(() {
-                                                blurLayer.opacity = v;
-                                              });
-                                            });
-                                          },
-                                        ),
                                       ),
-                                      TextButton(
-                                        child: Text(
-                                          i18n('Reset'),
-                                        ),
-                                        onPressed: () {
-                                          setS(() {
-                                            setState(() {
-                                              blurLayer.opacity = 0.0;
-                                            });
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                        i18n('Reset'),
+                                      ),
+                                      onPressed: () {
+                                        setS(() {
+                                          setState(() {
+                                            blurLayer.opacity = 0.0;
                                           });
-                                        },
-                                      )
-                                    ]),
-                                  ],
-                                ),
+                                        });
+                                      },
+                                    )
+                                  ]),
+                                ],
                               ),
                             );
                           },
@@ -864,15 +879,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   onTap: () async {
                     resetTransformation();
 
-                    /// Use case: if you don't want to stack your filter, use
-                    /// this logic. Along with code on line 888 and
-                    /// remove line 889
-                    // for (int i = 1; i < layers.length; i++) {
-                    //   if (layers[i] is BackgroundLayerData) {
-                    //     layers.removeAt(i);
-                    //     break;
-                    //   }
-                    // }
                     var data = await screenshotController.capture(
                         pixelRatio: pixelRatio);
 
@@ -894,10 +900,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       file: ImageItem(editedImage),
                     );
 
-                    /// Use case, if you don't want your filter to effect your
-                    /// other elements such as emoji and text. Use insert
-                    /// instead of add like in line 888
-                    //layers.insert(1, layer);
                     layers.add(layer);
 
                     await layer.file.status;
@@ -968,18 +970,20 @@ class BottomButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            color: Colors.white,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            i18n(text),
-          ),
-        ],
-      ).paddingSymmetric(horizontal: 16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal:8.0),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              i18n(text),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1022,18 +1026,21 @@ class _ImageCropperState extends State<ImageCropper> {
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                var state = _controller.currentState;
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () async {
+                  var state = _controller.currentState;
 
-                if (state == null) return;
+                  if (state == null) return;
 
-                var data = await cropImageDataWithNativeLibrary(state: state);
+                  var data = await cropImageDataWithNativeLibrary(state: state);
 
-                Navigator.pop(context, data);
-              },
-            ).paddingSymmetric(horizontal: 8),
+                  Navigator.pop(context, data);
+                },
+              ),
+            ),
           ],
         ),
         body: Container(
@@ -1125,10 +1132,13 @@ class _ImageCropperState extends State<ImageCropper> {
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
                       IconButton(
-                        icon: Icon(
-                          Icons.portrait,
-                          color: isLandscape ? gray : white,
-                        ).paddingSymmetric(horizontal: 8, vertical: 4),
+                        icon: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal:8.0,vertical: 4.0),
+                          child: Icon(
+                            Icons.portrait,
+                            color: isLandscape ? grey : white,
+                          ),
+                        ),
                         onPressed: () {
                           isLandscape = false;
                           if (aspectRatioOriginal != null) {
@@ -1138,10 +1148,13 @@ class _ImageCropperState extends State<ImageCropper> {
                         },
                       ),
                       IconButton(
-                        icon: Icon(
-                          Icons.landscape,
-                          color: isLandscape ? white : gray,
-                        ).paddingSymmetric(horizontal: 8, vertical: 4),
+                        icon: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal:8.0,vertical: 4.0),
+                          child: Icon(
+                            Icons.landscape,
+                            color: isLandscape ? white : grey,
+                          ),
+                        ),
                         onPressed: () {
                           isLandscape = true;
                           aspectRatio = aspectRatioOriginal!;
@@ -1213,12 +1226,15 @@ class _ImageCropperState extends State<ImageCropper> {
         }
         setState(() {});
       },
-      child: Text(
-        i18n(title),
-        style: TextStyle(
-          color: aspectRatioOriginal == ratio ? white : gray,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal:8.0,vertical: 4.0),
+        child: Text(
+          i18n(title),
+          style: TextStyle(
+            color: aspectRatioOriginal == ratio ? white : grey,
+          ),
         ),
-      ).paddingSymmetric(horizontal: 8, vertical: 4),
+      ),
     );
   }
 }
@@ -1264,13 +1280,15 @@ class _ImageFiltersState extends State<ImageFilters> {
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                var data = await screenshotController.capture();
-                Navigator.pop(context, data);
-              },
-            ).paddingSymmetric(horizontal: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () async {
+                  Navigator.pop(context, filterAppliedImage);
+                },
+              ),
+            ),
           ],
         ),
         body: Center(
@@ -1338,35 +1356,39 @@ class _ImageFiltersState extends State<ImageFilters> {
   }
 
   Widget filterPreviewButton({required filter, required String name}) {
-    return Column(children: [
-      Container(
-        height: 64,
-        width: 64,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(48),
-          border: Border.all(
-            color: Colors.black,
-            width: 2,
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(48),
-          child: FilterAppliedImage(
-            image: widget.image,
-            filter: filter,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      Text(
-        i18n(name),
-        style: const TextStyle(fontSize: 12),
-      ),
-    ]).onTap(() {
+    return InkWell(
+      onTap:(() {
       selectedFilter = filter;
       setState(() {});
-    });
+    }),
+      child: Column(children: [
+        Container(
+          height: 64,
+          width: 64,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(48),
+            border: Border.all(
+              color: Colors.black,
+              width: 2,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(48),
+            child: FilterAppliedImage(
+              image: widget.image,
+              filter: filter,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Text(
+          i18n(name),
+          style: const TextStyle(fontSize: 12),
+        ),
+      ])
+
+    ); 
   }
 }
 
@@ -1498,57 +1520,65 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
           systemOverlayStyle: SystemUiOverlayStyle.light,
           automaticallyImplyLeading: false,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ).paddingSymmetric(horizontal: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
             const Spacer(),
-            IconButton(
-              icon: Icon(
-                Icons.undo,
-                color: control.paths.isNotEmpty ? white : white.withAlpha(80),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: Icon(
+                  Icons.undo,
+                  color: control.paths.isNotEmpty ? white : white.withAlpha(80),
+                ),
+                onPressed: () {
+                  if (control.paths.isEmpty) return;
+                  skipNextEvent = true;
+                  undoList.add(control.paths.last);
+                  control.stepBack();
+                  setState(() {});
+                },
               ),
-              onPressed: () {
-                if (control.paths.isEmpty) return;
-                skipNextEvent = true;
-                undoList.add(control.paths.last);
-                control.stepBack();
-                setState(() {});
-              },
-            ).paddingSymmetric(horizontal: 8),
-            IconButton(
-              icon: Icon(
-                Icons.redo,
-                color: undoList.isNotEmpty ? white : white.withAlpha(80),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: Icon(
+                  Icons.redo,
+                  color: undoList.isNotEmpty ? white : white.withAlpha(80),
+                ),
+                onPressed: () {
+                  if (undoList.isEmpty) return;
+
+                  control.paths.add(undoList.removeLast());
+                  setState(() {});
+                },
               ),
-              onPressed: () {
-                if (undoList.isEmpty) return;
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:8.0),
+              child: IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: () async {
+                  if (control.paths.isEmpty) return Navigator.pop(context);
+                  var data = await control.toImage(color: currentColor);
 
-                control.paths.add(undoList.removeLast());
-                setState(() {});
-              },
-            ).paddingSymmetric(horizontal: 8),
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (control.paths.isEmpty) return Navigator.pop(context);
-                var data = await control.toImage(color: currentColor);
-
-                return Navigator.pop(context, data!.buffer.asUint8List());
-              },
-            ).paddingSymmetric(horizontal: 8),
+                  return Navigator.pop(context, data!.buffer.asUint8List());
+                },
+              ),
+            ),
           ],
         ),
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: currentColor == black ? white : black,
-            image: DecorationImage(
-                image: Image.memory(widget.image).image, fit: BoxFit.contain),
-          ),
+          color: currentColor == black ? white : black,
           child: HandSignature(
             control: control,
             color: currentColor,
@@ -1562,7 +1592,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             height: 80,
             decoration: const BoxDecoration(
               boxShadow: [
-                BoxShadow(blurRadius: 2),
+                BoxShadow(blurRadius: 10),
               ],
             ),
             child: ListView(
@@ -1617,7 +1647,6 @@ class ColorButton extends StatelessWidget {
   final Color color;
   final Function onTap;
   final bool isSelected;
-
   const ColorButton({
     Key? key,
     required this.color,
@@ -1627,20 +1656,23 @@ class ColorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 34,
-      width: 34,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 23),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isSelected ? Colors.white : Colors.white54,
-          width: isSelected ? 2 : 1,
-        ),
-      ),
-    ).onTap(() {
+    return InkWell(
+      onTap:(() {
       onTap(color);
-    });
+    }),
+      child: Container(
+        height: 34,
+        width: 34,
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 23),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? Colors.white : Colors.white54,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+      )
+    ) ; 
   }
 }

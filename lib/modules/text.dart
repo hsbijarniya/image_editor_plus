@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_editor_plus/data/layer.dart';
-import 'package:image_editor_plus/image_editor_plus.dart';
+import './../data/layer.dart';
+import './../image_editor_plus.dart';
 
 import 'colors_picker.dart';
 
@@ -14,7 +14,7 @@ class TextEditorImage extends StatefulWidget {
 
 class _TextEditorImageState extends State<TextEditorImage> {
   TextEditingController name = TextEditingController();
-  Color currentColor = Colors.white;
+  Color currentColor = Colors.black;
   double slider = 32.0;
   TextAlign align = TextAlign.left;
 
@@ -23,7 +23,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
     var size = MediaQuery.of(context).size;
 
     return Theme(
-      data: ThemeData.dark(),
+      data: ImageEditor.theme,
       child: Scaffold(
         appBar: AppBar(
           actions: <Widget>[
@@ -74,7 +74,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
                   ),
                 );
               },
-              color: Colors.white,
+              color: Colors.black,
               padding: const EdgeInsets.all(15),
             )
           ],
@@ -98,8 +98,8 @@ class _TextEditorImageState extends State<TextEditorImage> {
                     keyboardType: TextInputType.multiline,
                     minLines: 5,
                     maxLines: 99999,
-                    style: TextStyle(
-                      color: currentColor,
+                    style: const TextStyle(
+                      color: Colors.white,
                     ),
                     autofocus: true,
                   ),

@@ -18,10 +18,9 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   image_picker: ^0.8.5+3
   path_provider: ^2.0.11
-  permission_handler: ^10.0.0
+  permission_handler: ^10.1.0
   screenshot: ^1.2.3
   flutter_colorpicker: ^1.0.3
-  nb_utils: ^4.6.15
   extended_image: ^6.2.1
   crop: ^0.5.2
   image: ^3.2.0

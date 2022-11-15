@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_editor_plus/image_editor_plus.dart';
+import './../image_editor_plus.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageItem {
@@ -48,7 +48,7 @@ class ImageItem {
       width = decodedImage.width;
       viewportRatio = viewportSize.height / height;
 
-      loader.complete(decodedImage);
+      loader.complete(true);
     }
 
     return true;

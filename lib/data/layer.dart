@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:image_editor_plus/data/image_item.dart';
-import 'package:nb_utils/nb_utils.dart';
+import '../../constants/colors.dart';
+import './../data/image_item.dart';
 
 /// Layer class with some common properties
 class Layer {
