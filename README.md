@@ -45,7 +45,7 @@ Or in text format add the key:
 No configuration required - the plugin should work out of the box.
 
 
-### Language translation
+### Example - Language translation
 
 ```dart
 // before using image editor
@@ -83,6 +83,41 @@ final editedImage = await Navigator.push(
             image: data, // <-- Uint8List of image
         ),
     ),
+);
+```
+  
+  
+### Example - Image Convert
+
+```dart
+import 'package:image_editor_plus/utils.dart';
+
+// to jpeg
+final convertedImage = await ImageUtils.convert(
+    image: data, // <-- Uint8List of image
+    format: 'jpg',
+    quality: 80,
+);
+
+// to png
+final convertedImage = await ImageUtils.convert(
+    image: data, // <-- Uint8List of image
+    format: 'png',
+    quality: 80,
+);
+
+// to webp else jpg (note: webp required one alernate target format in case it's not available)
+final convertedImage = await ImageUtils.convert(
+    image: data, // <-- Uint8List of image
+    format: 'webp|jpg',
+    quality: 80,
+);
+
+// to webp else png (note: webp required one alernate target format in case it's not available)
+final convertedImage = await ImageUtils.convert(
+    image: data, // <-- Uint8List of image
+    format: 'webp|png',
+    quality: 80,
 );
 ```
   

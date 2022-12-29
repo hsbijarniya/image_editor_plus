@@ -1,3 +1,8 @@
+## 0.1.8
+
+* Performance optimization
+* Dependencies updated
+
 ## 0.1.7
 
 * ImageUtils.convert & ImageUtils.convertAll methods added to convert image from one format to another.

@@ -152,7 +152,6 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
       data: ImageEditor.theme,
       child: Scaffold(
         appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
           automaticallyImplyLeading: false,
           actions: [
             const BackButton(),
@@ -161,9 +160,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
               IconButton(
                 icon: const Icon(Icons.photo),
                 onPressed: () async {
-                  List<XFile>? selected = await picker.pickMultiImage();
-
-                  if (selected == null) return;
+                  var selected = await picker.pickMultiImage();
 
                   images.addAll(selected.map((e) => ImageItem(e)).toList());
                 },
@@ -434,6 +431,19 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     setState(() {});
   }
 
+  /// obtain image Uint8List by merging layers
+  Future<Uint8List?> getMergedImage() async {
+    if (layers.length == 1 && layers.first is BackgroundLayerData) {
+      return (layers.first as BackgroundLayerData).file.image;
+    } else if (layers.length == 1 && layers.first is ImageLayerData) {
+      return (layers.first as ImageLayerData).image.image;
+    }
+
+    return screenshotController.capture(
+      pixelRatio: pixelRatio,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     viewportSize = MediaQuery.of(context).size;
@@ -496,7 +506,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
       child: Scaffold(
         key: scaf,
         appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
           automaticallyImplyLeading: false,
           actions: filterActions,
         ),
@@ -582,24 +591,23 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   onTap: () async {
                     resetTransformation();
 
-                    var data = await screenshotController.capture(
-                        pixelRatio: pixelRatio);
+                    var mergedImage = await getMergedImage();
 
-                    Uint8List? img = await Navigator.push(
+                    Uint8List? croppedImage = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ImageCropper(
-                          image: data!,
+                          image: mergedImage!,
                         ),
                       ),
                     );
 
-                    if (img == null) return;
+                    if (croppedImage == null) return;
 
                     flipValue = 0;
                     rotateValue = 0;
 
-                    await currentImage.load(img);
+                    await currentImage.load(croppedImage);
                     setState(() {});
                   },
                 ),
@@ -873,25 +881,24 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                     //     break;
                     //   }
                     // }
-                    var data = await screenshotController.capture(
-                        pixelRatio: pixelRatio);
+                    var mergedImage = await getMergedImage();
 
-                    Uint8List? editedImage = await Navigator.push(
+                    Uint8List? filterAppliedImage = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ImageFilters(
-                          image: data!,
+                          image: mergedImage!,
                         ),
                       ),
                     );
 
-                    if (editedImage == null) return;
+                    if (filterAppliedImage == null) return;
 
                     removedLayers.clear();
                     undoLayers.clear();
 
                     var layer = BackgroundLayerData(
-                      file: ImageItem(editedImage),
+                      file: ImageItem(filterAppliedImage),
                     );
 
                     /// Use case, if you don't want your filter to effect your
@@ -1020,7 +1027,6 @@ class _ImageCropperState extends State<ImageCropper> {
       data: ImageEditor.theme,
       child: Scaffold(
         appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
           actions: [
             IconButton(
               icon: const Icon(Icons.check),
@@ -1262,7 +1268,6 @@ class _ImageFiltersState extends State<ImageFilters> {
       data: ImageEditor.theme,
       child: Scaffold(
         appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
           actions: [
             IconButton(
               icon: const Icon(Icons.check),
@@ -1495,7 +1500,6 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
       data: ImageEditor.theme,
       child: Scaffold(
         appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
@@ -1547,7 +1551,9 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
           decoration: BoxDecoration(
             color: currentColor == black ? white : black,
             image: DecorationImage(
-                image: Image.memory(widget.image).image, fit: BoxFit.contain),
+              image: Image.memory(widget.image).image,
+              fit: BoxFit.contain,
+            ),
           ),
           child: HandSignature(
             control: control,
