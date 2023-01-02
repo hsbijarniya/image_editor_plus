@@ -159,9 +159,9 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
             if (images.length < widget.maxLength && widget.allowGallery)
               IconButton(
                 icon: const Icon(Icons.photo),
-                onPressed: () async {
-                  var selected = await picker.pickMultiImage();
-
+                 onPressed: () async {
+                  List<XFile>? selected = await picker.pickMultiImage();
+                  if (selected == null) return;
                   images.addAll(selected.map((e) => ImageItem(e)).toList());
                 },
               ).paddingSymmetric(horizontal: 8),
