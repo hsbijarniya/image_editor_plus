@@ -15,7 +15,7 @@ class ImageLayerOverlay extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ImageLayerOverlayState createState() => _ImageLayerOverlayState();
+  createState() => _ImageLayerOverlayState();
 }
 
 class _ImageLayerOverlayState extends State<ImageLayerOverlay> {

@@ -6,7 +6,7 @@ class ColorPickersSlider extends StatefulWidget {
   const ColorPickersSlider({Key? key}) : super(key: key);
 
   @override
-  _ColorPickersSliderState createState() => _ColorPickersSliderState();
+  createState() => _ColorPickersSliderState();
 }
 
 class _ColorPickersSliderState extends State<ColorPickersSlider> {

@@ -16,7 +16,7 @@ class ImageEditorExample extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ImageEditorExampleState createState() => _ImageEditorExampleState();
+  createState() => _ImageEditorExampleState();
 }
 
 class _ImageEditorExampleState extends State<ImageEditorExample> {

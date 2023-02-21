@@ -57,7 +57,7 @@ class BarColorPicker extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BarColorPickerState createState() => _BarColorPickerState();
+  createState() => _BarColorPickerState();
 }
 
 class _BarColorPickerState extends State<BarColorPicker> {

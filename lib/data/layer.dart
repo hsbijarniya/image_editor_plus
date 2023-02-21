@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/data/image_item.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 /// Layer class with some common properties
 class Layer {
@@ -82,7 +81,7 @@ class TextLayerData extends Layer {
   TextLayerData({
     required this.text,
     this.size = 64,
-    this.color = white,
+    this.color = Colors.white,
     this.background = Colors.transparent,
     this.backgroundOpacity = 1,
     this.align = TextAlign.left,

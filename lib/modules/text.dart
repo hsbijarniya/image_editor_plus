@@ -9,7 +9,7 @@ class TextEditorImage extends StatefulWidget {
   const TextEditorImage({Key? key}) : super(key: key);
 
   @override
-  _TextEditorImageState createState() => _TextEditorImageState();
+  createState() => _TextEditorImageState();
 }
 
 class _TextEditorImageState extends State<TextEditorImage> {
