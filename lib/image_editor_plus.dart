@@ -351,7 +351,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
   List<Widget> get filterActions {
     return [
-      const BackButton(),
+      // const BackButton(),
       const Spacer(),
       IconButton(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -368,9 +368,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
           if (layers.length <= 1) return; // do not remove image layer
 
-          undoLayers.add(layers.removeLast());
-
-          setState(() {});
+          setState(() {
+            undoLayers.add(layers.removeLast());
+          });
         },
       ),
       IconButton(
@@ -380,44 +380,18 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         onPressed: () {
           if (undoLayers.isEmpty) return;
 
-          layers.add(undoLayers.removeLast());
-
-          setState(() {});
+          setState(() {
+            layers.add(undoLayers.removeLast());
+          });
         },
       ),
-      if (widget.allowGallery)
-        IconButton(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          icon: const Icon(Icons.photo),
-          onPressed: () async {
-            var image = await picker.pickImage(source: ImageSource.gallery);
-
-            if (image == null) return;
-
-            loadImage(image);
-          },
-        ),
-      if (widget.allowCamera)
-        IconButton(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          icon: const Icon(Icons.camera_alt),
-          onPressed: () async {
-            var image = await picker.pickImage(source: ImageSource.camera);
-
-            if (image == null) return;
-
-            loadImage(image);
-          },
-        ),
       IconButton(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
-          const CircularProgressIndicator(
-            color: Colors.white,
-          );
+          SnackBar snack = SnackBar(content: Text('Saving..'));
+          ScaffoldMessenger.of(context).showSnackBar(snack);
           resetTransformation();
-          print('changes');
           // var binaryIntList =
           await screenshotController
               .capture(pixelRatio: pixelRatio)
