@@ -393,8 +393,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     ];
   }
 
-  Future<void> _saving() async {
-    await showDialog(
+  Future<void> _saving() {
+    showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
