@@ -387,39 +387,30 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-          _saving();
+          var item = await screenshotController.capture(pixelRatio: pixelRatio);
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    CircularProgressIndicator(
+                      color: Colors.black26,
+                    ),
+                    Text("Loading..."),
+                  ],
+                ),
+              );
+            },
+          );
+          Navigator.pop(context, item);
         },
       ),
     ];
-  }
-
-  void _saving() async {
-     await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              CircularProgressIndicator(
-                color: Colors.black26,
-              ),
-              Text("Loading..."),
-            ],
-          ),
-        );
-      },
-    ).then((value) {
-       Future.delayed(const Duration(milliseconds: 500), () async {
-         await screenshotController.capture(pixelRatio: pixelRatio).then((value) {
-           Navigator.pop(context, value);
-         });
-       });
-     });
-
   }
 
   @override
