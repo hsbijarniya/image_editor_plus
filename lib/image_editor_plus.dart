@@ -185,6 +185,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
               icon: const Icon(Icons.check),
               onPressed: ()  async {
                 CircularProgressIndicator();
+                print('changes');
                 //add loader
                 await Navigator.pop(context, images);
               },
