@@ -1306,6 +1306,8 @@ class _ImageFiltersState extends State<ImageFilters> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
+          
+                print('changes');
                 var data = await screenshotController.capture();
                 Navigator.pop(context, data);
               },
