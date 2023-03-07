@@ -387,7 +387,16 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
-         CircularProgressIndicator(color: Colors.white);
+         CbuildShowDialog(BuildContext context) {
+            return showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                });
+          }
           resetTransformation();
           // var binaryIntList =
           await screenshotController
