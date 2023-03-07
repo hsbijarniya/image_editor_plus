@@ -389,6 +389,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         onPressed: () async {
           resetTransformation();
           Future.delayed(Duration(milliseconds: 20), () async {
+            CircularProgressIndicator();
             await screenshotController
                 .capture(pixelRatio: pixelRatio)
                 .then((value) {
