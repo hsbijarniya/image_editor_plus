@@ -184,9 +184,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
-                CircularProgressIndicator();
-                print('changes');
-                //add loader
+                
                 Navigator.pop(context, images);
               },
             ),
@@ -389,7 +387,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
-          SnackBar snack = SnackBar(content: Text('Saving..'));
+          SnackBar snack = SnackBar(content: Text('Saving..'), backgroundColor: Colors.grey.shade300);
           ScaffoldMessenger.of(context).showSnackBar(snack);
           resetTransformation();
           // var binaryIntList =
