@@ -183,11 +183,11 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
-              onPressed: ()  async {
+              onPressed: () async {
                 CircularProgressIndicator();
                 print('changes');
                 //add loader
-               Navigator.pop(context, images);
+                Navigator.pop(context, images);
               },
             ),
           ],
@@ -217,7 +217,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
 
                             if (img != null) {
                               setState(() {
-                              image.load(img);
+                                image.load(img);
                               });
                             }
                           },
@@ -413,12 +413,17 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
+          const CircularProgressIndicator(
+            color: Colors.white,
+          );
           resetTransformation();
-
-          var binaryIntList =
-              await screenshotController.capture(pixelRatio: pixelRatio);
-
-          Navigator.pop(context, binaryIntList);
+          print('changes');
+          // var binaryIntList =
+          await screenshotController
+              .capture(pixelRatio: pixelRatio)
+              .then((value) {
+            Navigator.pop(context, value);
+          });
         },
       ),
     ];
@@ -1306,7 +1311,6 @@ class _ImageFiltersState extends State<ImageFilters> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
-          
                 print('changes');
                 var data = await screenshotController.capture();
                 Navigator.pop(context, data);
