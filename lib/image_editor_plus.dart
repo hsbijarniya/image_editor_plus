@@ -387,8 +387,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
-          SnackBar snack = SnackBar(content: Text('Saving..'), backgroundColor: Colors.grey.shade300);
-          ScaffoldMessenger.of(context).showSnackBar(snack);
+         CircularProgressIndicator(color: Colors.white);
           resetTransformation();
           // var binaryIntList =
           await screenshotController
