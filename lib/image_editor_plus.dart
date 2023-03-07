@@ -184,7 +184,6 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
-                
                 Navigator.pop(context, images);
               },
             ),
@@ -388,19 +387,34 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-
-            print('progress indicator');
-          Container(width: 60, height: 60, color: Colors.lightGreen,
-            child: CircularProgressIndicator(),);
-             screenshotController
-                .capture(pixelRatio: pixelRatio)
-                .then((value) {
-              Navigator.pop(context, value);
-            });
-          
+          print('progress indicator');
+          screenshotController.capture(pixelRatio: pixelRatio).then((value) {
+            _onLoading(value);
+          });
         },
       ),
     ];
+  }
+
+  void _onLoading(value) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              CircularProgressIndicator(),
+              Text("Loading..."),
+            ],
+          ),
+        );
+      },
+    );
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pop(context, value);
+    });
   }
 
   @override
