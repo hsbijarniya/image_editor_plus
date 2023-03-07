@@ -348,7 +348,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
   List<Widget> get filterActions {
     return [
-      // const BackButton(),
+      const BackButton(),
       const Spacer(),
       IconButton(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -388,7 +388,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         onPressed: () async {
           resetTransformation();
           _onLoading();
-          var i = screenshotController.capture(pixelRatio: pixelRatio);
+          var i = await screenshotController.capture(pixelRatio: pixelRatio);
           Navigator.pop(context, i);
         },
       ),
