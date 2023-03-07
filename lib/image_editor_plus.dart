@@ -187,7 +187,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                 CircularProgressIndicator();
                 print('changes');
                 //add loader
-                await Navigator.pop(context, images);
+               Navigator.pop(context, images);
               },
             ),
           ],
