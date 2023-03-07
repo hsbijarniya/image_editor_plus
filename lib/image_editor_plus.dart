@@ -387,7 +387,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
-         buildShowDialog(BuildContext context) {
+          resetTransformation();
+          buildShowDialog(BuildContext context) {
             return showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -395,15 +396,14 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
-                });
+                }).then((value) async {
+              await screenshotController
+                  .capture(pixelRatio: pixelRatio)
+                  .then((value) {
+                Navigator.pop(context, value);
+              });
+            });
           }
-          resetTransformation();
-          // var binaryIntList =
-          await screenshotController
-              .capture(pixelRatio: pixelRatio)
-              .then((value) {
-            Navigator.pop(context, value);
-          });
         },
       ),
     ];
