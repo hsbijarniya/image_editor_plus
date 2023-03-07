@@ -183,8 +183,10 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
-              onPressed: () async {
-                Navigator.pop(context, images);
+              onPressed: ()  async {
+                CircularProgressIndicator();
+                //add loader
+                await Navigator.pop(context, images);
               },
             ),
           ],
@@ -213,8 +215,9 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             );
 
                             if (img != null) {
+                              setState(() {
                               image.load(img);
-                              setState(() {});
+                              });
                             }
                           },
                           child: Container(
