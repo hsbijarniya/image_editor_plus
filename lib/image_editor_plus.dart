@@ -393,8 +393,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     ];
   }
 
-  void _saving() {
-     showDialog(
+  void _saving() async {
+     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -412,12 +412,14 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         );
       },
-    );
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      await screenshotController.capture(pixelRatio: pixelRatio).then((value) {
-        Navigator.pop(context, value);
-      });
-    });
+    ).then((value) {
+       Future.delayed(const Duration(milliseconds: 500), () async {
+         await screenshotController.capture(pixelRatio: pixelRatio).then((value) {
+           Navigator.pop(context, value);
+         });
+       });
+     });
+
   }
 
   @override
