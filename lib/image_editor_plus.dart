@@ -388,9 +388,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('saving')));
+
             print('progress indicator');
-            CircularProgressIndicator(color: Colors.white);
+          Container(width: 60, height: 60, color: Colors.lightGreen,
+            child: CircularProgressIndicator(),);
              screenshotController
                 .capture(pixelRatio: pixelRatio)
                 .then((value) {
