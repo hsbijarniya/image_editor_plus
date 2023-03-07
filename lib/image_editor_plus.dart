@@ -388,21 +388,24 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         onPressed: () async {
           resetTransformation();
           print('progress indicator');
+          _onLoading();
           screenshotController.capture(pixelRatio: pixelRatio).then((value) {
-            _onLoading(value);
+            Navigator.pop(context, value);
           });
         },
       ),
     ];
   }
 
-  void _onLoading(value) {
+  void _onLoading() {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.grey.shade100,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: const [
               CircularProgressIndicator(),
@@ -412,9 +415,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         );
       },
     );
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context, value);
-    });
   }
 
   @override
