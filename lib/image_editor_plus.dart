@@ -388,22 +388,13 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-          buildShowDialog(BuildContext context) {
-            return showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }).then((value) async {
-              await screenshotController
-                  .capture(pixelRatio: pixelRatio)
-                  .then((value) {
-                Navigator.pop(context, value);
-              });
+          Future.delayed(Duration(milliseconds: 20), () async {
+            await screenshotController
+                .capture(pixelRatio: pixelRatio)
+                .then((value) {
+              Navigator.pop(context, value);
             });
-          }
+          });
         },
       ),
     ];
