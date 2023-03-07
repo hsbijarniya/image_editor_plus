@@ -388,14 +388,15 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-          Future.delayed(Duration(milliseconds: 20), () async {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('saving')));
+
             CircularProgressIndicator();
             await screenshotController
                 .capture(pixelRatio: pixelRatio)
                 .then((value) {
               Navigator.pop(context, value);
             });
-          });
+          
         },
       ),
     ];
