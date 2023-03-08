@@ -387,7 +387,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-          var i = screenshotController.capture(pixelRatio: pixelRatio);
+          var i = await screenshotController.capture(pixelRatio: pixelRatio);
           Navigator.pop(context, i);
         },
       ),
