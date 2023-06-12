@@ -44,6 +44,7 @@ class ImageEditor extends StatelessWidget {
   final Directory? savePath;
   final int maxLength;
   final bool allowGallery, allowCamera, allowMultiple;
+  final Widget? progressIndicator;
 
   const ImageEditor(
       {Key? key,
@@ -54,6 +55,7 @@ class ImageEditor extends StatelessWidget {
       this.allowGallery = false,
       this.allowMultiple = false,
       this.maxLength = 99,
+      this.progressIndicator,
       Color? appBar})
       : super(key: key);
 
@@ -79,6 +81,7 @@ class ImageEditor extends StatelessWidget {
         savePath: savePath,
         allowCamera: allowCamera,
         allowGallery: allowGallery,
+        progressIndicator: progressIndicator,
       );
     }
   }
@@ -314,6 +317,7 @@ class SingleImageEditor extends StatefulWidget {
   final dynamic image;
   final List? imageList;
   final bool allowCamera, allowGallery;
+  final Widget? progressIndicator;
 
   const SingleImageEditor({
     Key? key,
@@ -322,6 +326,7 @@ class SingleImageEditor extends StatefulWidget {
     this.imageList,
     this.allowCamera = false,
     this.allowGallery = false,
+    this.progressIndicator,
   }) : super(key: key);
 
   @override
@@ -331,6 +336,7 @@ class SingleImageEditor extends StatefulWidget {
 class _SingleImageEditorState extends State<SingleImageEditor> {
   ImageItem currentImage = ImageItem();
 
+  bool isLoading = false;
   Offset offset1 = Offset.zero;
   Offset offset2 = Offset.zero;
   final scaf = GlobalKey<ScaffoldState>();
@@ -410,11 +416,11 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         icon: const Icon(Icons.check),
         onPressed: () async {
           resetTransformation();
-
+          isLoading = true;
           var binaryIntList =
               await screenshotController.capture(pixelRatio: pixelRatio);
-
-          Navigator.pop(context, binaryIntList);
+          isLoading = false;
+          if (mounted) Navigator.pop(context, binaryIntList);
         },
       ),
     ];
@@ -524,65 +530,72 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           automaticallyImplyLeading: false,
           actions: filterActions,
         ),
-        body: GestureDetector(
-          onScaleUpdate: (details) {
-            // print(details);
+        body: Stack(
+          children: [
+            GestureDetector(
+              onScaleUpdate: (details) {
+                // print(details);
 
-            // move
-            if (details.pointerCount == 1) {
-              // print(details.focalPointDelta);
-              x += details.focalPointDelta.dx;
-              y += details.focalPointDelta.dy;
-              setState(() {});
-            }
+                // move
+                if (details.pointerCount == 1) {
+                  // print(details.focalPointDelta);
+                  x += details.focalPointDelta.dx;
+                  y += details.focalPointDelta.dy;
+                  setState(() {});
+                }
 
-            // scale
-            if (details.pointerCount == 2) {
-              // print([details.horizontalScale, details.verticalScale]);
-              if (details.horizontalScale != 1) {
-                scaleFactor = lastScaleFactor *
-                    math.min(details.horizontalScale, details.verticalScale);
-                setState(() {});
-              }
-            }
-          },
-          onScaleEnd: (details) {
-            lastScaleFactor = scaleFactor;
-          },
-          child: Center(
-            child: SizedBox(
-              height: currentImage.height / pixelRatio,
-              width: currentImage.width / pixelRatio,
-              child: Screenshot(
-                controller: screenshotController,
-                child: RotatedBox(
-                  quarterTurns: rotateValue,
-                  child: Transform(
-                    transform: Matrix4(
-                      1,
-                      0,
-                      0,
-                      0,
-                      0,
-                      1,
-                      0,
-                      0,
-                      0,
-                      0,
-                      1,
-                      0,
-                      x,
-                      y,
-                      0,
-                      1 / scaleFactor,
-                    )..rotateY(flipValue),
-                    alignment: FractionalOffset.center,
-                    child: layersStack,
+                // scale
+                if (details.pointerCount == 2) {
+                  // print([details.horizontalScale, details.verticalScale]);
+                  if (details.horizontalScale != 1) {
+                    scaleFactor = lastScaleFactor *
+                        math.min(
+                            details.horizontalScale, details.verticalScale);
+                    setState(() {});
+                  }
+                }
+              },
+              onScaleEnd: (details) {
+                lastScaleFactor = scaleFactor;
+              },
+              child: Center(
+                child: SizedBox(
+                  height: currentImage.height / pixelRatio,
+                  width: currentImage.width / pixelRatio,
+                  child: Screenshot(
+                    controller: screenshotController,
+                    child: RotatedBox(
+                      quarterTurns: rotateValue,
+                      child: Transform(
+                        transform: Matrix4(
+                          1,
+                          0,
+                          0,
+                          0,
+                          0,
+                          1,
+                          0,
+                          0,
+                          0,
+                          0,
+                          1,
+                          0,
+                          x,
+                          y,
+                          0,
+                          1 / scaleFactor,
+                        )..rotateY(flipValue),
+                        alignment: FractionalOffset.center,
+                        child: layersStack,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+            if (isLoading && widget.progressIndicator != null)
+              widget.progressIndicator!,
+          ],
         ),
         bottomNavigationBar: Container(
           // color: Colors.black45,
@@ -602,11 +615,13 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
               children: <Widget>[
                 BottomButton(
                   icon: Icons.crop,
-                  text: 'Crop',
+                  text: i18n('Crop'),
                   onTap: () async {
                     resetTransformation();
 
                     var mergedImage = await getMergedImage();
+
+                    if (!mounted) return;
 
                     Uint8List? croppedImage = await Navigator.push(
                       context,
@@ -628,7 +643,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: Icons.edit,
-                  text: 'Brush',
+                  text: i18n('Brush'),
                   onTap: () async {
                     var drawing = await Navigator.push(
                       context,
@@ -655,7 +670,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: Icons.text_fields,
-                  text: 'Text',
+                  text: i18n('Text'),
                   onTap: () async {
                     TextLayerData? layer = await Navigator.push(
                       context,
@@ -676,7 +691,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: Icons.flip,
-                  text: 'Flip',
+                  text: i18n('Flip'),
                   onTap: () {
                     setState(() {
                       flipValue = flipValue == 0 ? math.pi : 0;
@@ -685,7 +700,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: Icons.rotate_left,
-                  text: 'Rotate left',
+                  text: i18n('Rotate left'),
                   onTap: () {
                     var t = currentImage.width;
                     currentImage.width = currentImage.height;
@@ -697,7 +712,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: Icons.rotate_right,
-                  text: 'Rotate right',
+                  text: i18n('Rotate right'),
                   onTap: () {
                     var t = currentImage.width;
                     currentImage.width = currentImage.height;
@@ -709,7 +724,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: Icons.blur_on,
-                  text: 'Blur',
+                  text: i18n('Blur'),
                   onTap: () {
                     var blurLayer = BackgroundBlurLayerData(
                       color: Colors.transparent,
@@ -883,7 +898,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 // ),
                 BottomButton(
                   icon: Icons.photo,
-                  text: 'Filter',
+                  text: i18n('Filter'),
                   onTap: () async {
                     resetTransformation();
 
@@ -897,6 +912,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                     //   }
                     // }
                     var mergedImage = await getMergedImage();
+
+                    if (!mounted) return;
 
                     Uint8List? filterAppliedImage = await Navigator.push(
                       context,
@@ -929,7 +946,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
                 BottomButton(
                   icon: FontAwesomeIcons.faceSmile,
-                  text: 'Emoji',
+                  text: i18n('Emoji'),
                   onTap: () async {
                     EmojiLayerData? layer = await showModalBottomSheet(
                       context: context,
@@ -1056,7 +1073,7 @@ class _ImageCropperState extends State<ImageCropper> {
 
                 var data = await cropImageDataWithNativeLibrary(state: state);
 
-                Navigator.pop(context, data);
+                if (mounted) Navigator.pop(context, data);
               },
             ),
           ],
@@ -1181,8 +1198,8 @@ class _ImageCropperState extends State<ImageCropper> {
                           setState(() {});
                         },
                       ),
-                      imageRatioButton(null, 'Freeform'),
-                      imageRatioButton(1, 'Square'),
+                      imageRatioButton(null, i18n('Freeform')),
+                      imageRatioButton(1, i18n('Square')),
                       imageRatioButton(4 / 3, '4:3'),
                       imageRatioButton(5 / 4, '5:4'),
                       imageRatioButton(7 / 5, '7:5'),
@@ -1303,7 +1320,7 @@ class _ImageFiltersState extends State<ImageFilters> {
               icon: const Icon(Icons.check),
               onPressed: () async {
                 var data = await screenshotController.capture();
-                Navigator.pop(context, data);
+                if (mounted) Navigator.pop(context, data);
               },
             ),
           ],
@@ -1580,7 +1597,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
               onPressed: () async {
                 if (control.paths.isEmpty) return Navigator.pop(context);
                 var data = await control.toImage(color: currentColor);
-
+                if (!mounted) return;
                 return Navigator.pop(context, data!.buffer.asUint8List());
               },
             ),

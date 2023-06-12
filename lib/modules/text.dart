@@ -87,11 +87,11 @@ class _TextEditorImageState extends State<TextEditorImage> {
                   height: size.height / 2.2,
                   child: TextField(
                     controller: name,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Insert Your Message',
-                      hintStyle: TextStyle(color: Colors.white),
+                      contentPadding: const EdgeInsets.all(10),
+                      hintText: i18n('Insert Your Message'),
+                      hintStyle: const TextStyle(color: Colors.white),
                       alignLabelWithHint: true,
                     ),
                     scrollPadding: const EdgeInsets.all(20.0),
