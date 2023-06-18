@@ -34,7 +34,6 @@ class EmojiLayerData extends Layer {
   double size;
 
   EmojiLayerData({
-    Key? key,
     this.text = '',
     this.size = 64,
     Offset? offset,
@@ -55,7 +54,6 @@ class ImageLayerData extends Layer {
   double size;
 
   ImageLayerData({
-    Key? key,
     required this.image,
     this.size = 64,
     Offset? offset,

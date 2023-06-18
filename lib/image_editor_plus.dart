@@ -20,6 +20,7 @@ import 'package:image_editor_plus/layers/background_layer.dart';
 import 'package:image_editor_plus/layers/emoji_layer.dart';
 import 'package:image_editor_plus/layers/image_layer.dart';
 import 'package:image_editor_plus/layers/text_layer.dart';
+import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/text.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,20 +45,18 @@ class ImageEditor extends StatelessWidget {
   final Directory? savePath;
   final int maxLength;
   final bool allowGallery, allowCamera, allowMultiple;
-  final Widget? progressIndicator;
 
-  const ImageEditor(
-      {Key? key,
-      this.image,
-      this.images,
-      this.savePath,
-      this.allowCamera = false,
-      this.allowGallery = false,
-      this.allowMultiple = false,
-      this.maxLength = 99,
-      this.progressIndicator,
-      Color? appBar})
-      : super(key: key);
+  const ImageEditor({
+    super.key,
+    this.image,
+    this.images,
+    this.savePath,
+    this.allowCamera = false,
+    this.allowGallery = false,
+    this.allowMultiple = false,
+    this.maxLength = 99,
+    Color? appBar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +80,6 @@ class ImageEditor extends StatelessWidget {
         savePath: savePath,
         allowCamera: allowCamera,
         allowGallery: allowGallery,
-        progressIndicator: progressIndicator,
       );
     }
   }
@@ -125,14 +123,14 @@ class MultiImageEditor extends StatefulWidget {
   final bool allowGallery, allowCamera, allowMultiple;
 
   const MultiImageEditor({
-    Key? key,
+    super.key,
     this.images = const [],
     this.savePath,
     this.allowCamera = false,
     this.allowGallery = false,
     this.allowMultiple = false,
     this.maxLength = 99,
-  }) : super(key: key);
+  });
 
   @override
   createState() => _MultiImageEditorState();
@@ -168,6 +166,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   var selected = await picker.pickMultiImage();
 
                   images.addAll(selected.map((e) => ImageItem(e)).toList());
+                  setState(() {});
                 },
               ),
             if (images.length < widget.maxLength && widget.allowCamera)
@@ -181,6 +180,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   if (selected == null) return;
 
                   images.add(ImageItem(selected));
+                  setState(() {});
                 },
               ),
             IconButton(
@@ -317,17 +317,15 @@ class SingleImageEditor extends StatefulWidget {
   final dynamic image;
   final List? imageList;
   final bool allowCamera, allowGallery;
-  final Widget? progressIndicator;
 
   const SingleImageEditor({
-    Key? key,
+    super.key,
     this.savePath,
     this.image,
     this.imageList,
     this.allowCamera = false,
     this.allowGallery = false,
-    this.progressIndicator,
-  }) : super(key: key);
+  });
 
   @override
   createState() => _SingleImageEditorState();
@@ -336,10 +334,9 @@ class SingleImageEditor extends StatefulWidget {
 class _SingleImageEditorState extends State<SingleImageEditor> {
   ImageItem currentImage = ImageItem();
 
-  bool isLoading = false;
   Offset offset1 = Offset.zero;
   Offset offset2 = Offset.zero;
-  final scaf = GlobalKey<ScaffoldState>();
+  final scaffoldGlobalKey = GlobalKey<ScaffoldState>();
 
   final GlobalKey container = GlobalKey();
   final GlobalKey globalKey = GlobalKey();
@@ -354,74 +351,89 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   List<Widget> get filterActions {
     return [
       const BackButton(),
-      const Spacer(),
-      IconButton(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        icon: Icon(Icons.undo,
-            color: layers.length > 1 || removedLayers.isNotEmpty
-                ? Colors.white
-                : Colors.grey),
-        onPressed: () {
-          if (removedLayers.isNotEmpty) {
-            layers.add(removedLayers.removeLast());
-            setState(() {});
-            return;
-          }
+      SizedBox(
+        width: MediaQuery.of(context).size.width - 48,
+        child: SingleChildScrollView(
+          reverse: true,
+          scrollDirection: Axis.horizontal,
+          child: Row(children: [
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              icon: Icon(Icons.undo,
+                  color: layers.length > 1 || removedLayers.isNotEmpty
+                      ? Colors.white
+                      : Colors.grey),
+              onPressed: () {
+                if (removedLayers.isNotEmpty) {
+                  layers.add(removedLayers.removeLast());
+                  setState(() {});
+                  return;
+                }
 
-          if (layers.length <= 1) return; // do not remove image layer
+                if (layers.length <= 1) return; // do not remove image layer
 
-          undoLayers.add(layers.removeLast());
+                undoLayers.add(layers.removeLast());
 
-          setState(() {});
-        },
-      ),
-      IconButton(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        icon: Icon(Icons.redo,
-            color: undoLayers.isNotEmpty ? Colors.white : Colors.grey),
-        onPressed: () {
-          if (undoLayers.isEmpty) return;
+                setState(() {});
+              },
+            ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              icon: Icon(Icons.redo,
+                  color: undoLayers.isNotEmpty ? Colors.white : Colors.grey),
+              onPressed: () {
+                if (undoLayers.isEmpty) return;
 
-          layers.add(undoLayers.removeLast());
+                layers.add(undoLayers.removeLast());
 
-          setState(() {});
-        },
-      ),
-      if (widget.allowGallery)
-        IconButton(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          icon: const Icon(Icons.photo),
-          onPressed: () async {
-            var image = await picker.pickImage(source: ImageSource.gallery);
+                setState(() {});
+              },
+            ),
+            if (widget.allowGallery)
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                icon: const Icon(Icons.photo),
+                onPressed: () async {
+                  var image =
+                      await picker.pickImage(source: ImageSource.gallery);
 
-            if (image == null) return;
+                  if (image == null) return;
 
-            loadImage(image);
-          },
+                  loadImage(image);
+                },
+              ),
+            if (widget.allowCamera)
+              IconButton(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                icon: const Icon(Icons.camera_alt),
+                onPressed: () async {
+                  var image =
+                      await picker.pickImage(source: ImageSource.camera);
+
+                  if (image == null) return;
+
+                  loadImage(image);
+                },
+              ),
+            IconButton(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              icon: const Icon(Icons.check),
+              onPressed: () async {
+                resetTransformation();
+                setState(() {});
+
+                LoadingScreen(scaffoldGlobalKey).show();
+
+                var binaryIntList =
+                    await screenshotController.capture(pixelRatio: pixelRatio);
+
+                LoadingScreen(scaffoldGlobalKey).hide();
+
+                if (mounted) Navigator.pop(context, binaryIntList);
+              },
+            ),
+          ]),
         ),
-      if (widget.allowCamera)
-        IconButton(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          icon: const Icon(Icons.camera_alt),
-          onPressed: () async {
-            var image = await picker.pickImage(source: ImageSource.camera);
-
-            if (image == null) return;
-
-            loadImage(image);
-          },
-        ),
-      IconButton(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        icon: const Icon(Icons.check),
-        onPressed: () async {
-          resetTransformation();
-          isLoading = true;
-          var binaryIntList =
-              await screenshotController.capture(pixelRatio: pixelRatio);
-          isLoading = false;
-          if (mounted) Navigator.pop(context, binaryIntList);
-        },
       ),
     ];
   }
@@ -495,12 +507,20 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         if (layerItem is BackgroundBlurLayerData && layerItem.radius > 0) {
           return BackgroundBlurLayer(
             layerData: layerItem,
+            onUpdate: () {
+              setState(() {});
+            },
           );
         }
 
         // Emoji layer
         if (layerItem is EmojiLayerData) {
-          return EmojiLayer(layerData: layerItem);
+          return EmojiLayer(
+            layerData: layerItem,
+            onUpdate: () {
+              setState(() {});
+            },
+          );
         }
 
         // Text layer
@@ -525,78 +545,84 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        key: scaf,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          actions: filterActions,
-        ),
-        body: Stack(
-          children: [
-            GestureDetector(
-              onScaleUpdate: (details) {
-                // print(details);
+        key: scaffoldGlobalKey,
+        body: Stack(children: [
+          GestureDetector(
+            onScaleUpdate: (details) {
+              // print(details);
 
-                // move
-                if (details.pointerCount == 1) {
-                  // print(details.focalPointDelta);
-                  x += details.focalPointDelta.dx;
-                  y += details.focalPointDelta.dy;
+              // move
+              if (details.pointerCount == 1) {
+                // print(details.focalPointDelta);
+                x += details.focalPointDelta.dx;
+                y += details.focalPointDelta.dy;
+                setState(() {});
+              }
+
+              // scale
+              if (details.pointerCount == 2) {
+                // print([details.horizontalScale, details.verticalScale]);
+                if (details.horizontalScale != 1) {
+                  scaleFactor = lastScaleFactor *
+                      math.min(details.horizontalScale, details.verticalScale);
                   setState(() {});
                 }
-
-                // scale
-                if (details.pointerCount == 2) {
-                  // print([details.horizontalScale, details.verticalScale]);
-                  if (details.horizontalScale != 1) {
-                    scaleFactor = lastScaleFactor *
-                        math.min(
-                            details.horizontalScale, details.verticalScale);
-                    setState(() {});
-                  }
-                }
-              },
-              onScaleEnd: (details) {
-                lastScaleFactor = scaleFactor;
-              },
-              child: Center(
-                child: SizedBox(
-                  height: currentImage.height / pixelRatio,
-                  width: currentImage.width / pixelRatio,
-                  child: Screenshot(
-                    controller: screenshotController,
-                    child: RotatedBox(
-                      quarterTurns: rotateValue,
-                      child: Transform(
-                        transform: Matrix4(
-                          1,
-                          0,
-                          0,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                          0,
-                          0,
-                          1,
-                          0,
-                          x,
-                          y,
-                          0,
-                          1 / scaleFactor,
-                        )..rotateY(flipValue),
-                        alignment: FractionalOffset.center,
-                        child: layersStack,
-                      ),
+              }
+            },
+            onScaleEnd: (details) {
+              lastScaleFactor = scaleFactor;
+            },
+            child: Center(
+              child: SizedBox(
+                height: currentImage.height / pixelRatio,
+                width: currentImage.width / pixelRatio,
+                child: Screenshot(
+                  controller: screenshotController,
+                  child: RotatedBox(
+                    quarterTurns: rotateValue,
+                    child: Transform(
+                      transform: Matrix4(
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        x,
+                        y,
+                        0,
+                        1 / scaleFactor,
+                      )..rotateY(flipValue),
+                      alignment: FractionalOffset.center,
+                      child: layersStack,
                     ),
                   ),
                 ),
               ),
             ),
-            if (isLoading && widget.progressIndicator != null)
-              widget.progressIndicator!,
-          ],
-        ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.25),
+                ),
+                child: Row(
+                  children: filterActions,
+                ),
+              ),
+            ),
+          )
+        ]),
         bottomNavigationBar: Container(
           // color: Colors.black45,
           alignment: Alignment.bottomCenter,
@@ -618,8 +644,11 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   text: i18n('Crop'),
                   onTap: () async {
                     resetTransformation();
+                    LoadingScreen(scaffoldGlobalKey).show();
 
                     var mergedImage = await getMergedImage();
+
+                    LoadingScreen(scaffoldGlobalKey).hide();
 
                     if (!mounted) return;
 
@@ -649,7 +678,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ImageEditorDrawing(
-                          image: currentImage.image,
+                          image: currentImage,
                         ),
                       ),
                     );
@@ -661,6 +690,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       layers.add(
                         ImageLayerData(
                           image: ImageItem(drawing),
+                          offset: Offset(
+                            -currentImage.width / 4,
+                            -currentImage.height / 4,
+                          ),
                         ),
                       );
 
@@ -995,12 +1028,12 @@ class BottomButton extends StatelessWidget {
   final String text;
 
   const BottomButton({
-    Key? key,
+    super.key,
     this.onTap,
     this.onLongPress,
     required this.icon,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1030,7 +1063,7 @@ class BottomButton extends StatelessWidget {
 class ImageCropper extends StatefulWidget {
   final Uint8List image;
 
-  const ImageCropper({Key? key, required this.image}) : super(key: key);
+  const ImageCropper({super.key, required this.image});
 
   @override
   createState() => _ImageCropperState();
@@ -1166,38 +1199,40 @@ class _ImageCropperState extends State<ImageCropper> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                      if (aspectRatioOriginal != null)
+                        IconButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          icon: Icon(
+                            Icons.portrait,
+                            color: isLandscape ? Colors.grey : Colors.white,
+                          ),
+                          onPressed: () {
+                            isLandscape = false;
+                            if (aspectRatioOriginal != null) {
+                              aspectRatio = 1 / aspectRatioOriginal!;
+                            }
+                            setState(() {});
+                          },
                         ),
-                        icon: Icon(
-                          Icons.portrait,
-                          color: isLandscape ? Colors.grey : Colors.white,
+                      if (aspectRatioOriginal != null)
+                        IconButton(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          icon: Icon(
+                            Icons.landscape,
+                            color: isLandscape ? Colors.white : Colors.grey,
+                          ),
+                          onPressed: () {
+                            isLandscape = true;
+                            aspectRatio = aspectRatioOriginal!;
+                            setState(() {});
+                          },
                         ),
-                        onPressed: () {
-                          isLandscape = false;
-                          if (aspectRatioOriginal != null) {
-                            aspectRatio = 1 / aspectRatioOriginal!;
-                          }
-                          setState(() {});
-                        },
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        icon: Icon(
-                          Icons.landscape,
-                          color: isLandscape ? Colors.white : Colors.grey,
-                        ),
-                        onPressed: () {
-                          isLandscape = true;
-                          aspectRatio = aspectRatioOriginal!;
-                          setState(() {});
-                        },
-                      ),
                       imageRatioButton(null, i18n('Freeform')),
                       imageRatioButton(1, i18n('Square')),
                       imageRatioButton(4 / 3, '4:3'),
@@ -1283,10 +1318,10 @@ class ImageFilters extends StatefulWidget {
   final bool useCache;
 
   const ImageFilters({
-    Key? key,
+    super.key,
     required this.image,
     this.useCache = true,
-  }) : super(key: key);
+  });
 
   @override
   createState() => _ImageFiltersState();
@@ -1434,13 +1469,13 @@ class FilterAppliedImage extends StatelessWidget {
   final double opacity;
 
   FilterAppliedImage({
-    Key? key,
+    super.key,
     required this.image,
     required this.filter,
     this.fit,
     this.onProcess,
     this.opacity = 1,
-  }) : super(key: key) {
+  }) {
     // process filter in background
     if (onProcess != null) {
       // no filter supplied
@@ -1483,20 +1518,18 @@ class FilterAppliedImage extends StatelessWidget {
 
 /// Show image drawing surface over image
 class ImageEditorDrawing extends StatefulWidget {
-  final Uint8List image;
+  final ImageItem image;
 
   const ImageEditorDrawing({
-    Key? key,
+    super.key,
     required this.image,
-  }) : super(key: key);
+  });
 
   @override
   State<ImageEditorDrawing> createState() => _ImageEditorDrawingState();
 }
 
 class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
-  ImageItem image = ImageItem();
-
   Color pickerColor = Colors.white;
   Color currentColor = Colors.white;
 
@@ -1528,7 +1561,6 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 
   @override
   void initState() {
-    image.load(widget.image);
     control.addListener(() {
       if (control.hasActivePath) return;
 
@@ -1596,8 +1628,15 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
               icon: const Icon(Icons.check),
               onPressed: () async {
                 if (control.paths.isEmpty) return Navigator.pop(context);
-                var data = await control.toImage(color: currentColor);
+
+                var data = await control.toImage(
+                  color: currentColor,
+                  height: widget.image.height,
+                  width: widget.image.width,
+                );
+
                 if (!mounted) return;
+
                 return Navigator.pop(context, data!.buffer.asUint8List());
               },
             ),
@@ -1609,7 +1648,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
           decoration: BoxDecoration(
             color: currentColor == Colors.black ? Colors.white : Colors.black,
             image: DecorationImage(
-              image: Image.memory(widget.image).image,
+              image: Image.memory(widget.image.image).image,
               fit: BoxFit.contain,
             ),
           ),
@@ -1683,11 +1722,11 @@ class ColorButton extends StatelessWidget {
   final bool isSelected;
 
   const ColorButton({
-    Key? key,
+    super.key,
     required this.color,
     required this.onTap,
     this.isSelected = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1704,7 +1743,7 @@ class ColorButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? Colors.white : Colors.white54,
-            width: isSelected ? 2 : 1,
+            width: isSelected ? 3 : 1,
           ),
         ),
       ),

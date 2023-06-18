@@ -1,3 +1,8 @@
+## 0.2.2
+
+* Dependencies updated
+* Bug fixes
+
 ## 0.2.1
 
 * Dependencies updated

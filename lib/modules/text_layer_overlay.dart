@@ -9,11 +9,11 @@ class TextLayerOverlay extends StatefulWidget {
   final Function onUpdate;
 
   const TextLayerOverlay({
-    Key? key,
+    super.key,
     required this.layer,
     required this.index,
     required this.onUpdate,
-  }) : super(key: key);
+  });
 
   @override
   createState() => _TextLayerOverlayState();

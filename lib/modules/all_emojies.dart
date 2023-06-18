@@ -4,7 +4,7 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 
 class Emojies extends StatefulWidget {
-  const Emojies({Key? key}) : super(key: key);
+  const Emojies({super.key});
 
   @override
   createState() => _EmojiesState();

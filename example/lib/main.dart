@@ -12,8 +12,8 @@ void main() {
 
 class ImageEditorExample extends StatefulWidget {
   const ImageEditorExample({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   createState() => _ImageEditorExampleState();
