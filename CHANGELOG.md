@@ -1,3 +1,13 @@
+## 0.2.4
+
+* Ratio options can be provided in constructor
+* Allowed feature list can be provided in constructor
+* Image compress height & width parameter added
+
+## 0.2.3
+
+* Bug fixes
+
 ## 0.2.2
 
 * Dependencies updated

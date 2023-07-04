@@ -14,6 +14,9 @@ class ImageUtils {
     image, {
     String format = 'jpeg',
     int quality = 80,
+    int? height,
+    int? width,
+    bool preserveExif = true,
   }) async {
     if (!_formatMap.containsKey(format)) {
       throw Exception('Output format not supported by library.');
@@ -24,7 +27,9 @@ class ImageUtils {
         image,
         quality: quality,
         format: _formatMap[format]!,
-        keepExif: true,
+        minHeight: height ?? 1080,
+        minWidth: width ?? 1920,
+        keepExif: preserveExif,
       );
 
       return output;
@@ -33,7 +38,9 @@ class ImageUtils {
         image,
         quality: quality,
         format: _formatMap[format]!,
-        keepExif: true,
+        minHeight: height ?? 1080,
+        minWidth: width ?? 1920,
+        keepExif: preserveExif,
       );
 
       if (output == null) {
@@ -63,4 +70,40 @@ class ImageUtils {
 
     return outputs;
   }
+}
+
+class AspectRatioOption {
+  final String title;
+  final double? ratio;
+
+  const AspectRatioOption({
+    required this.title,
+    this.ratio,
+  });
+}
+
+class ImageEditorFeatures {
+  final bool crop,
+      text,
+      brush,
+      flip,
+      rotate,
+      blur,
+      filters,
+      emoji,
+      pickFromGallery,
+      captureFromCamera;
+
+  const ImageEditorFeatures({
+    this.pickFromGallery = false,
+    this.captureFromCamera = false,
+    this.crop = false,
+    this.blur = false,
+    this.brush = false,
+    this.emoji = false,
+    this.filters = false,
+    this.flip = false,
+    this.rotate = false,
+    this.text = false,
+  });
 }

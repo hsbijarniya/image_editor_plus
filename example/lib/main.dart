@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
+import 'package:image_editor_plus/utils.dart';
 
 void main() {
   runApp(
@@ -76,8 +77,18 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
                       imageData,
                     ],
                     allowMultiple: true,
-                    allowCamera: true,
-                    allowGallery: true,
+                    features: const ImageEditorFeatures(
+                      pickFromGallery: true,
+                      captureFromCamera: true,
+                      crop: true,
+                      blur: true,
+                      brush: true,
+                      emoji: true,
+                      filters: true,
+                      flip: true,
+                      rotate: true,
+                      text: true,
+                    ),
                   ),
                 ),
               );
