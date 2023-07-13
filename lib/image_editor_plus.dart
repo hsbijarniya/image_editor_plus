@@ -47,6 +47,7 @@ class ImageEditor extends StatelessWidget {
   final int maxLength;
   final bool allowGallery, allowCamera, allowMultiple;
   final ImageEditorFeatures features;
+  final List<AspectRatioOption> cropAvailableRatios;
 
   const ImageEditor({
     super.key,
@@ -57,6 +58,7 @@ class ImageEditor extends StatelessWidget {
     @Deprecated('Use features instead') this.allowGallery = false,
     this.allowMultiple = false,
     this.maxLength = 99,
+    Color? appBar,
     this.features = const ImageEditorFeatures(
       pickFromGallery: true,
       captureFromCamera: true,
@@ -69,7 +71,14 @@ class ImageEditor extends StatelessWidget {
       rotate: true,
       text: true,
     ),
-    Color? appBar,
+    this.cropAvailableRatios = const [
+      AspectRatioOption(title: 'Freeform'),
+      AspectRatioOption(title: '1:1', ratio: 1),
+      AspectRatioOption(title: '4:3', ratio: 4 / 3),
+      AspectRatioOption(title: '5:4', ratio: 5 / 4),
+      AspectRatioOption(title: '7:5', ratio: 7 / 5),
+      AspectRatioOption(title: '16:9', ratio: 16 / 9),
+    ],
   });
 
   @override
@@ -89,12 +98,14 @@ class ImageEditor extends StatelessWidget {
         allowMultiple: allowMultiple,
         maxLength: maxLength,
         features: features,
+        cropAvailableRatios: cropAvailableRatios,
       );
     } else {
       return SingleImageEditor(
         image: image,
         savePath: savePath,
         features: features,
+        cropAvailableRatios: cropAvailableRatios,
       );
     }
   }
@@ -137,6 +148,7 @@ class MultiImageEditor extends StatefulWidget {
   final int maxLength;
   final bool allowGallery, allowCamera, allowMultiple;
   final ImageEditorFeatures features;
+  final List<AspectRatioOption> cropAvailableRatios;
 
   const MultiImageEditor({
     super.key,
@@ -158,6 +170,14 @@ class MultiImageEditor extends StatefulWidget {
       rotate: true,
       text: true,
     ),
+    this.cropAvailableRatios = const [
+      AspectRatioOption(title: 'Freeform'),
+      AspectRatioOption(title: '1:1', ratio: 1),
+      AspectRatioOption(title: '4:3', ratio: 4 / 3),
+      AspectRatioOption(title: '5:4', ratio: 5 / 4),
+      AspectRatioOption(title: '7:5', ratio: 7 / 5),
+      AspectRatioOption(title: '16:9', ratio: 16 / 9),
+    ],
   });
 
   @override
@@ -348,6 +368,7 @@ class SingleImageEditor extends StatefulWidget {
   final List? imageList;
   final bool allowCamera, allowGallery;
   final ImageEditorFeatures features;
+  final List<AspectRatioOption> cropAvailableRatios;
 
   const SingleImageEditor({
     super.key,
@@ -368,6 +389,14 @@ class SingleImageEditor extends StatefulWidget {
       rotate: true,
       text: true,
     ),
+    this.cropAvailableRatios = const [
+      AspectRatioOption(title: 'Freeform'),
+      AspectRatioOption(title: '1:1', ratio: 1),
+      AspectRatioOption(title: '4:3', ratio: 4 / 3),
+      AspectRatioOption(title: '5:4', ratio: 5 / 4),
+      AspectRatioOption(title: '7:5', ratio: 7 / 5),
+      AspectRatioOption(title: '16:9', ratio: 16 / 9),
+    ],
   });
 
   @override
@@ -703,6 +732,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           MaterialPageRoute(
                             builder: (context) => ImageCropper(
                               image: mergedImage!,
+                              availableRatios: widget.cropAvailableRatios,
                             ),
                           ),
                         );
