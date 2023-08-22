@@ -9,13 +9,13 @@ class ImageLayer extends StatefulWidget {
   final VoidCallback? onUpdate;
 
   const ImageLayer({
-    Key? key,
+    super.key,
     required this.layerData,
     this.onUpdate,
-  }) : super(key: key);
+  });
 
   @override
-  _ImageLayerState createState() => _ImageLayerState();
+  createState() => _ImageLayerState();
 }
 
 class _ImageLayerState extends State<ImageLayer> {

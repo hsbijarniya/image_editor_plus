@@ -9,13 +9,13 @@ class EmojiLayer extends StatefulWidget {
   final VoidCallback? onUpdate;
 
   const EmojiLayer({
-    Key? key,
+    super.key,
     required this.layerData,
     this.onUpdate,
-  }) : super(key: key);
+  });
 
   @override
-  _EmojiLayerState createState() => _EmojiLayerState();
+  createState() => _EmojiLayerState();
 }
 
 class _EmojiLayerState extends State<EmojiLayer> {

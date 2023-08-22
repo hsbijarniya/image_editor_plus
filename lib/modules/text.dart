@@ -6,10 +6,10 @@ import 'package:image_editor_plus/image_editor_plus.dart';
 import 'colors_picker.dart';
 
 class TextEditorImage extends StatefulWidget {
-  const TextEditorImage({Key? key}) : super(key: key);
+  const TextEditorImage({super.key});
 
   @override
-  _TextEditorImageState createState() => _TextEditorImageState();
+  createState() => _TextEditorImageState();
 }
 
 class _TextEditorImageState extends State<TextEditorImage> {
@@ -87,11 +87,11 @@ class _TextEditorImageState extends State<TextEditorImage> {
                   height: size.height / 2.2,
                   child: TextField(
                     controller: name,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Insert Your Message',
-                      hintStyle: TextStyle(color: Colors.white),
+                      contentPadding: const EdgeInsets.all(10),
+                      hintText: i18n('Insert Your Message'),
+                      hintStyle: const TextStyle(color: Colors.white),
                       alignLabelWithHint: true,
                     ),
                     scrollPadding: const EdgeInsets.all(20.0),

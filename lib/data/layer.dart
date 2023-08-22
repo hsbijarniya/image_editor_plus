@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/data/image_item.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 /// Layer class with some common properties
 class Layer {
@@ -35,7 +34,6 @@ class EmojiLayerData extends Layer {
   double size;
 
   EmojiLayerData({
-    Key? key,
     this.text = '',
     this.size = 64,
     Offset? offset,
@@ -56,7 +54,6 @@ class ImageLayerData extends Layer {
   double size;
 
   ImageLayerData({
-    Key? key,
     required this.image,
     this.size = 64,
     Offset? offset,
@@ -82,7 +79,7 @@ class TextLayerData extends Layer {
   TextLayerData({
     required this.text,
     this.size = 64,
-    this.color = white,
+    this.color = Colors.white,
     this.background = Colors.transparent,
     this.backgroundOpacity = 1,
     this.align = TextAlign.left,
