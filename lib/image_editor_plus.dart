@@ -163,6 +163,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   var selected = await picker.pickMultiImage();
 
                   images.addAll(selected.map((e) => ImageItem(e)).toList());
+                  setState(() {});
                 },
               ).paddingSymmetric(horizontal: 8),
             if (images.length < widget.maxLength && widget.allowCamera)
@@ -175,6 +176,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   if (selected == null) return;
 
                   images.add(ImageItem(selected));
+                  setState(() {});
                 },
               ).paddingSymmetric(horizontal: 8),
             IconButton(
