@@ -1,4 +1,0 @@
-enum EditorMode {
-  brush,
-  filter,
-}

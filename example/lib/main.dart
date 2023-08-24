@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
-import 'package:image_editor_plus/utils.dart';
 
 void main() {
   runApp(
@@ -13,11 +12,11 @@ void main() {
 
 class ImageEditorExample extends StatefulWidget {
   const ImageEditorExample({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
-  createState() => _ImageEditorExampleState();
+  _ImageEditorExampleState createState() => _ImageEditorExampleState();
 }
 
 class _ImageEditorExampleState extends State<ImageEditorExample> {
@@ -77,18 +76,8 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
                       imageData,
                     ],
                     allowMultiple: true,
-                    features: const ImageEditorFeatures(
-                      pickFromGallery: true,
-                      captureFromCamera: true,
-                      crop: true,
-                      blur: true,
-                      brush: true,
-                      emoji: true,
-                      filters: true,
-                      flip: true,
-                      rotate: true,
-                      text: true,
-                    ),
+                    allowCamera: true,
+                    allowGallery: true,
                   ),
                 ),
               );

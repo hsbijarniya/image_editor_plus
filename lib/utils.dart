@@ -1,67 +1,58 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'dart:io';
 
-var _formatMap = <String, CompressFormat>{
-  'jpeg': CompressFormat.jpeg,
-  'jpg': CompressFormat.jpeg,
-  'heic': CompressFormat.heic,
-  'png': CompressFormat.png,
-  'webp': CompressFormat.webp,
-};
+import 'package:flutter/foundation.dart';
+import 'package:image_compression_flutter/image_compression_flutter.dart';
 
 class ImageUtils {
-  static Future<Uint8List> convert(
-    image, {
+  static Future<Uint8List> convert<InputImageType>(
+    InputImageType image, {
     String format = 'jpeg',
     int quality = 80,
-    int? height,
-    int? width,
-    bool preserveExif = true,
   }) async {
-    if (!_formatMap.containsKey(format)) {
-      throw Exception('Output format not supported by library.');
-    }
+    Uint8List imageBytes;
 
-    if (image is Uint8List) {
-      var output = await FlutterImageCompress.compressWithList(
-        image,
-        quality: quality,
-        format: _formatMap[format]!,
-        minHeight: height ?? 1080,
-        minWidth: width ?? 1920,
-        keepExif: preserveExif,
-      );
-
-      return output;
-    } else if (image is String) {
-      var output = await FlutterImageCompress.compressWithFile(
-        image,
-        quality: quality,
-        format: _formatMap[format]!,
-        minHeight: height ?? 1080,
-        minWidth: width ?? 1920,
-        keepExif: preserveExif,
-      );
-
-      if (output == null) {
-        throw Exception('Unable to compress image file');
-      }
-
-      return output;
+    if (InputImageType is Uint8List) {
+      imageBytes = image as Uint8List;
+    } else if (InputImageType is String) {
+      imageBytes = File(image as String).readAsBytesSync();
     } else {
       throw Exception('Image must be a Uint8List or path.');
     }
+
+    var formatMap = {
+      'jpeg': ImageOutputType.jpg,
+      'jpg': ImageOutputType.jpg,
+      'png': ImageOutputType.png,
+      'webp|jpg': ImageOutputType.webpThenJpg,
+      'webp|png': ImageOutputType.webpThenPng,
+    };
+
+    var input = ImageFile(
+      filePath: 'temp.jpg',
+      rawBytes: imageBytes,
+    );
+
+    var config = Configuration(
+      outputType: formatMap[format]!,
+      useJpgPngNativeCompressor: true,
+      quality: quality,
+    );
+
+    final param = ImageFileConfiguration(input: input, config: config);
+    final output = await compressor.compress(param);
+
+    return output.rawBytes;
   }
 
-  static Future<List<Uint8List>> convertAll(
-    List images, {
+  static Future<List<Uint8List>> convertAll<InputImageType>(
+    List<InputImageType> images, {
     String format = 'jpeg',
     int quality = 80,
   }) async {
     List<Uint8List> outputs = [];
 
     for (var image in images) {
-      outputs.add(await convert(
+      outputs.add(await convert<InputImageType>(
         image,
         format: format,
         quality: quality,
@@ -70,40 +61,4 @@ class ImageUtils {
 
     return outputs;
   }
-}
-
-class AspectRatioOption {
-  final String title;
-  final double? ratio;
-
-  const AspectRatioOption({
-    required this.title,
-    this.ratio,
-  });
-}
-
-class ImageEditorFeatures {
-  final bool crop,
-      text,
-      brush,
-      flip,
-      rotate,
-      blur,
-      filters,
-      emoji,
-      pickFromGallery,
-      captureFromCamera;
-
-  const ImageEditorFeatures({
-    this.pickFromGallery = false,
-    this.captureFromCamera = false,
-    this.crop = false,
-    this.blur = false,
-    this.brush = false,
-    this.emoji = false,
-    this.filters = false,
-    this.flip = false,
-    this.rotate = false,
-    this.text = false,
-  });
 }
