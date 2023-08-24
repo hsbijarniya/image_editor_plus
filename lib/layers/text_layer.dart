@@ -9,12 +9,12 @@ class TextLayer extends StatefulWidget {
   final VoidCallback? onUpdate;
 
   const TextLayer({
-    super.key,
+    Key? key,
     required this.layerData,
     this.onUpdate,
-  });
+  }) : super(key: key);
   @override
-  createState() => _TextViewState();
+  _TextViewState createState() => _TextViewState();
 }
 
 class _TextViewState extends State<TextLayer> {

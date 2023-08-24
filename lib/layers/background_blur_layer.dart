@@ -9,10 +9,10 @@ class BackgroundBlurLayer extends StatefulWidget {
   final VoidCallback? onUpdate;
 
   const BackgroundBlurLayer({
-    super.key,
+    Key? key,
     required this.layerData,
     this.onUpdate,
-  });
+  }) : super(key: key);
 
   @override
   State<BackgroundBlurLayer> createState() => _BackgroundBlurLayerState();

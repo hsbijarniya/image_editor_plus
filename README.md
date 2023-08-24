@@ -94,28 +94,29 @@ import 'package:image_editor_plus/utils.dart';
 
 // to jpeg
 final convertedImage = await ImageUtils.convert(
-    image: data, // <-- Uint8List/path of image
+    image: data, // <-- Uint8List of image
     format: 'jpg',
-    quality: 80,
-);
-
-// to heic
-final convertedImage = await ImageUtils.convert(
-    image: data, // <-- Uint8List/path of image
-    format: 'heic',
     quality: 80,
 );
 
 // to png
 final convertedImage = await ImageUtils.convert(
-    image: data, // <-- Uint8List/path of image
+    image: data, // <-- Uint8List of image
     format: 'png',
+    quality: 80,
 );
 
-// to webp
+// to webp else jpg (note: webp required one alernate target format in case it's not available)
 final convertedImage = await ImageUtils.convert(
-    image: data, // <-- Uint8List/path of image
-    format: 'webp',
+    image: data, // <-- Uint8List of image
+    format: 'webp|jpg',
+    quality: 80,
+);
+
+// to webp else png (note: webp required one alernate target format in case it's not available)
+final convertedImage = await ImageUtils.convert(
+    image: data, // <-- Uint8List of image
+    format: 'webp|png',
     quality: 80,
 );
 ```

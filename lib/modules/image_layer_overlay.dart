@@ -8,14 +8,14 @@ class ImageLayerOverlay extends StatefulWidget {
   final Function onUpdate;
 
   const ImageLayerOverlay({
-    super.key,
+    Key? key,
     required this.layerData,
     required this.index,
     required this.onUpdate,
-  });
+  }) : super(key: key);
 
   @override
-  createState() => _ImageLayerOverlayState();
+  _ImageLayerOverlayState createState() => _ImageLayerOverlayState();
 }
 
 class _ImageLayerOverlayState extends State<ImageLayerOverlay> {

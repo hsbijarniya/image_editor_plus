@@ -7,10 +7,10 @@ class BackgroundLayer extends StatefulWidget {
   final VoidCallback? onUpdate;
 
   const BackgroundLayer({
-    super.key,
+    Key? key,
     required this.layerData,
     this.onUpdate,
-  });
+  }) : super(key: key);
 
   @override
   State<BackgroundLayer> createState() => _BackgroundLayerState();

@@ -3,10 +3,10 @@ import 'package:image_editor_plus/image_editor_plus.dart';
 import 'colors_picker.dart';
 
 class ColorPickersSlider extends StatefulWidget {
-  const ColorPickersSlider({super.key});
+  const ColorPickersSlider({Key? key}) : super(key: key);
 
   @override
-  createState() => _ColorPickersSliderState();
+  _ColorPickersSliderState createState() => _ColorPickersSliderState();
 }
 
 class _ColorPickersSliderState extends State<ColorPickersSlider> {
