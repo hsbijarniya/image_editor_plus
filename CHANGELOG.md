@@ -1,3 +1,7 @@
+## 0.2.6
+
+* Bug fixes
+
 ## 0.2.5
 
 * Ratio options can be provided in ImageEditor as well as in ImageCropper

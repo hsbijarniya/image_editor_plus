@@ -45,7 +45,6 @@ class ImageEditor extends StatelessWidget {
 
   final Directory? savePath;
   final int maxLength;
-  final bool allowGallery, allowCamera, allowMultiple;
   final ImageEditorFeatures features;
   final List<AspectRatioOption> cropAvailableRatios;
 
@@ -54,9 +53,6 @@ class ImageEditor extends StatelessWidget {
     this.image,
     this.images,
     this.savePath,
-    @Deprecated('Use features instead') this.allowCamera = false,
-    @Deprecated('Use features instead') this.allowGallery = false,
-    this.allowMultiple = false,
     this.maxLength = 99,
     Color? appBar,
     this.features = const ImageEditorFeatures(
@@ -91,19 +87,18 @@ class ImageEditor extends StatelessWidget {
           'No image to work with, provide an image or allow the image picker.');
     }
 
-    if ((image == null || images != null) && allowMultiple == true) {
-      return MultiImageEditor(
-        images: images ?? [],
+    if (image != null) {
+      return SingleImageEditor(
+        image: image,
         savePath: savePath,
-        allowMultiple: allowMultiple,
-        maxLength: maxLength,
         features: features,
         cropAvailableRatios: cropAvailableRatios,
       );
     } else {
-      return SingleImageEditor(
-        image: image,
+      return MultiImageEditor(
+        images: images ?? [],
         savePath: savePath,
+        maxLength: maxLength,
         features: features,
         cropAvailableRatios: cropAvailableRatios,
       );
@@ -146,7 +141,6 @@ class MultiImageEditor extends StatefulWidget {
   final Directory? savePath;
   final List images;
   final int maxLength;
-  final bool allowGallery, allowCamera, allowMultiple;
   final ImageEditorFeatures features;
   final List<AspectRatioOption> cropAvailableRatios;
 
@@ -154,9 +148,6 @@ class MultiImageEditor extends StatefulWidget {
     super.key,
     this.images = const [],
     this.savePath,
-    @Deprecated('Use features instead') this.allowCamera = false,
-    @Deprecated('Use features instead') this.allowGallery = false,
-    this.allowMultiple = false,
     this.maxLength = 99,
     this.features = const ImageEditorFeatures(
       pickFromGallery: true,
@@ -366,7 +357,6 @@ class SingleImageEditor extends StatefulWidget {
   final Directory? savePath;
   final dynamic image;
   final List? imageList;
-  final bool allowCamera, allowGallery;
   final ImageEditorFeatures features;
   final List<AspectRatioOption> cropAvailableRatios;
 
@@ -375,8 +365,6 @@ class SingleImageEditor extends StatefulWidget {
     this.savePath,
     this.image,
     this.imageList,
-    @Deprecated('Use features instead') this.allowCamera = false,
-    @Deprecated('Use features instead') this.allowGallery = false,
     this.features = const ImageEditorFeatures(
       pickFromGallery: true,
       captureFromCamera: true,
@@ -1656,7 +1644,6 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
     Colors.purple,
     Colors.brown,
     Colors.indigo,
-    Colors.indigo,
   ];
 
   void changeColor(Color color) {
@@ -1751,7 +1738,6 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-            color: currentColor == Colors.black ? Colors.white : Colors.black,
             image: DecorationImage(
               image: Image.memory(widget.image.image).image,
               fit: BoxFit.contain,

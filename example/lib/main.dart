@@ -76,7 +76,6 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
                       imageData,
                       imageData,
                     ],
-                    allowMultiple: true,
                     features: const ImageEditorFeatures(
                       pickFromGallery: true,
                       captureFromCamera: true,
