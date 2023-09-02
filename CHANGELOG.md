@@ -1,3 +1,8 @@
+## 1.0.0
+
+* Breaking changes: ImageEditor class have multiple option like cropOption for crop releated setting.
+* Passing null to any option will disable that feature like cropOption: null will disable crop feature.
+
 ## 0.2.6
 
 * Bug fixes

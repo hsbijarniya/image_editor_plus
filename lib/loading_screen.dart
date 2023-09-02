@@ -33,3 +33,9 @@ class LoadingScreen {
     Navigator.pop(globalKey.currentContext!);
   }
 }
+
+@protected
+final scaffoldGlobalKey = GlobalKey<ScaffoldState>();
+
+@protected
+var loadingScreen = LoadingScreen(scaffoldGlobalKey);

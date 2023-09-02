@@ -39,6 +39,7 @@ class _TextViewState extends State<TextLayer> {
               ),
             ),
             context: context,
+            backgroundColor: Colors.transparent,
             builder: (context) {
               return TextLayerOverlay(
                 index: layers.indexOf(widget.layerData),

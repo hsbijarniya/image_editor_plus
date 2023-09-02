@@ -40,6 +40,7 @@ class _EmojiLayerState extends State<EmojiLayer> {
               ),
             ),
             context: context,
+            backgroundColor: Colors.transparent,
             builder: (context) {
               return EmojiLayerOverlay(
                 index: layers.indexOf(widget.layerData),

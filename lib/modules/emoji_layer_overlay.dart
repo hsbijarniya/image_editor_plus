@@ -46,7 +46,6 @@ class _EmojiLayerOverlayState extends State<EmojiLayerOverlay> {
               style: const TextStyle(color: Colors.white),
             ),
           ),
-          const Divider(),
           Slider(
               activeColor: Colors.white,
               inactiveColor: Colors.grey,

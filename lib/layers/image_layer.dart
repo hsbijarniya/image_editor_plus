@@ -40,6 +40,7 @@ class _ImageLayerState extends State<ImageLayer> {
               ),
             ),
             context: context,
+            backgroundColor: Colors.transparent,
             builder: (context) {
               return ImageLayerOverlay(
                 index: layers.indexOf(widget.layerData),

@@ -27,7 +27,6 @@ class _ColorPickersSliderState extends State<ColorPickersSlider> {
               style: const TextStyle(color: Colors.white),
             ),
           ),
-          const Divider(),
           const SizedBox(height: 20),
           Text(i18n('Slider Color'),
               style: const TextStyle(color: Colors.white)),

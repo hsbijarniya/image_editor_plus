@@ -1,6 +1,6 @@
 name: image_editor_plus
 description: Image Editor Plugin with filters, drawing, text and emoji like stories.
-version: 0.2.6
+version: 1.0.0
 homepage: https://ensorta.com
 repository: https://github.com/hsbijarniya/image_editor_plus
 
@@ -18,7 +18,7 @@ dependencies:
   image_picker: ^1.0.0
   screenshot: ^2.1.0
   flutter_colorpicker: ^1.0.3
-  extended_image: ^8.0.2
+  extended_image: ^8.1.0
   image: ^4.0.15
   image_editor: ^1.0.2
   colorfilter_generator: ^0.0.8

@@ -23,7 +23,7 @@ import 'package:image_editor_plus/layers/text_layer.dart';
 import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/text.dart';
-import 'package:image_editor_plus/utils.dart';
+import 'package:image_editor_plus/options.dart' as o;
 import 'package:image_picker/image_picker.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -40,49 +40,43 @@ String i18n(String sourceString) =>
 
 /// Single endpoint for MultiImageEditor & SingleImageEditor
 class ImageEditor extends StatelessWidget {
-  final Uint8List? image;
+  final dynamic image;
   final List? images;
-
   final Directory? savePath;
-  final int maxLength;
-  final ImageEditorFeatures features;
-  final List<AspectRatioOption> cropAvailableRatios;
+
+  final o.ImagePickerOption? imagePickerOption;
+  final o.CropOption? cropOption;
+  final o.BlurOption? blurOption;
+  final o.BrushOption? brushOption;
+  final o.EmojiOption? emojiOption;
+  final o.FiltersOption? filtersOption;
+  final o.FlipOption? flipOption;
+  final o.RotateOption? rotateOption;
+  final o.TextOption? textOption;
 
   const ImageEditor({
     super.key,
     this.image,
     this.images,
     this.savePath,
-    this.maxLength = 99,
-    Color? appBar,
-    this.features = const ImageEditorFeatures(
-      pickFromGallery: true,
-      captureFromCamera: true,
-      crop: true,
-      blur: true,
-      brush: true,
-      emoji: true,
-      filters: true,
-      flip: true,
-      rotate: true,
-      text: true,
-    ),
-    this.cropAvailableRatios = const [
-      AspectRatioOption(title: 'Freeform'),
-      AspectRatioOption(title: '1:1', ratio: 1),
-      AspectRatioOption(title: '4:3', ratio: 4 / 3),
-      AspectRatioOption(title: '5:4', ratio: 5 / 4),
-      AspectRatioOption(title: '7:5', ratio: 7 / 5),
-      AspectRatioOption(title: '16:9', ratio: 16 / 9),
-    ],
+    Color? appBarColor,
+    this.imagePickerOption,
+    this.cropOption = const o.CropOption(),
+    this.blurOption = const o.BlurOption(),
+    this.brushOption = const o.BrushOption(),
+    this.emojiOption = const o.EmojiOption(),
+    this.filtersOption = const o.FiltersOption(),
+    this.flipOption = const o.FlipOption(),
+    this.rotateOption = const o.RotateOption(),
+    this.textOption = const o.TextOption(),
   });
 
   @override
   Widget build(BuildContext context) {
-    if (images == null &&
-        image == null &&
-        !features.captureFromCamera &&
-        !features.pickFromGallery) {
+    if (image == null &&
+        images == null &&
+        imagePickerOption?.captureFromCamera != true &&
+        imagePickerOption?.pickFromGallery != true) {
       throw Exception(
           'No image to work with, provide an image or allow the image picker.');
     }
@@ -91,16 +85,29 @@ class ImageEditor extends StatelessWidget {
       return SingleImageEditor(
         image: image,
         savePath: savePath,
-        features: features,
-        cropAvailableRatios: cropAvailableRatios,
+        imagePickerOption: imagePickerOption,
+        cropOption: cropOption,
+        blurOption: blurOption,
+        brushOption: brushOption,
+        emojiOption: emojiOption,
+        filtersOption: filtersOption,
+        flipOption: flipOption,
+        rotateOption: rotateOption,
+        textOption: textOption,
       );
     } else {
       return MultiImageEditor(
         images: images ?? [],
         savePath: savePath,
-        maxLength: maxLength,
-        features: features,
-        cropAvailableRatios: cropAvailableRatios,
+        imagePickerOption: imagePickerOption,
+        cropOption: cropOption,
+        blurOption: blurOption,
+        brushOption: brushOption,
+        emojiOption: emojiOption,
+        filtersOption: filtersOption,
+        flipOption: flipOption,
+        rotateOption: rotateOption,
+        textOption: textOption,
       );
     }
   }
@@ -138,37 +145,32 @@ class ImageEditor extends StatelessWidget {
 
 /// Show multiple image carousel to edit multple images at one and allow more images to be added
 class MultiImageEditor extends StatefulWidget {
-  final Directory? savePath;
   final List images;
-  final int maxLength;
-  final ImageEditorFeatures features;
-  final List<AspectRatioOption> cropAvailableRatios;
+  final Directory? savePath;
+
+  final o.ImagePickerOption? imagePickerOption;
+  final o.CropOption? cropOption;
+  final o.BlurOption? blurOption;
+  final o.BrushOption? brushOption;
+  final o.EmojiOption? emojiOption;
+  final o.FiltersOption? filtersOption;
+  final o.FlipOption? flipOption;
+  final o.RotateOption? rotateOption;
+  final o.TextOption? textOption;
 
   const MultiImageEditor({
     super.key,
     this.images = const [],
     this.savePath,
-    this.maxLength = 99,
-    this.features = const ImageEditorFeatures(
-      pickFromGallery: true,
-      captureFromCamera: true,
-      crop: true,
-      blur: true,
-      brush: true,
-      emoji: true,
-      filters: true,
-      flip: true,
-      rotate: true,
-      text: true,
-    ),
-    this.cropAvailableRatios = const [
-      AspectRatioOption(title: 'Freeform'),
-      AspectRatioOption(title: '1:1', ratio: 1),
-      AspectRatioOption(title: '4:3', ratio: 4 / 3),
-      AspectRatioOption(title: '5:4', ratio: 5 / 4),
-      AspectRatioOption(title: '7:5', ratio: 7 / 5),
-      AspectRatioOption(title: '16:9', ratio: 16 / 9),
-    ],
+    this.imagePickerOption,
+    this.cropOption = const o.CropOption(),
+    this.blurOption = const o.BlurOption(),
+    this.brushOption = const o.BrushOption(),
+    this.emojiOption = const o.EmojiOption(),
+    this.filtersOption = const o.FiltersOption(),
+    this.flipOption = const o.FlipOption(),
+    this.rotateOption = const o.RotateOption(),
+    this.textOption = const o.TextOption(),
   });
 
   @override
@@ -197,8 +199,9 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
           actions: [
             const BackButton(),
             const Spacer(),
-            if (images.length < widget.maxLength &&
-                widget.features.pickFromGallery)
+            if (widget.imagePickerOption != null &&
+                images.length < widget.imagePickerOption!.maxLength &&
+                widget.imagePickerOption!.pickFromGallery)
               IconButton(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.photo),
@@ -209,8 +212,9 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   setState(() {});
                 },
               ),
-            if (images.length < widget.maxLength &&
-                widget.features.captureFromCamera)
+            if (widget.imagePickerOption != null &&
+                images.length < widget.imagePickerOption!.maxLength &&
+                widget.imagePickerOption!.captureFromCamera)
               IconButton(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.camera_alt),
@@ -304,40 +308,42 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             ),
                           ),
                         ),
-                        Positioned(
-                          bottom: 32,
-                          left: 0,
-                          child: Container(
-                            height: 38,
-                            width: 38,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(100),
-                              borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(19),
+                        if (widget.filtersOption != null)
+                          Positioned(
+                            bottom: 32,
+                            left: 0,
+                            child: Container(
+                              height: 38,
+                              width: 38,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withAlpha(100),
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(19),
+                                ),
+                              ),
+                              child: IconButton(
+                                iconSize: 20,
+                                padding: const EdgeInsets.all(0),
+                                onPressed: () async {
+                                  Uint8List? editedImage = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ImageFilters(
+                                        image: image.image,
+                                        options: widget.filtersOption,
+                                      ),
+                                    ),
+                                  );
+
+                                  if (editedImage != null) {
+                                    image.load(editedImage);
+                                  }
+                                },
+                                icon: const Icon(Icons.photo_filter_sharp),
                               ),
                             ),
-                            child: IconButton(
-                              iconSize: 20,
-                              padding: const EdgeInsets.all(0),
-                              onPressed: () async {
-                                Uint8List? editedImage = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageFilters(
-                                      image: image.image,
-                                    ),
-                                  ),
-                                );
-
-                                if (editedImage != null) {
-                                  image.load(editedImage);
-                                }
-                              },
-                              icon: const Icon(Icons.photo_filter_sharp),
-                            ),
                           ),
-                        ),
                       ]),
                   ],
                 ),
@@ -354,37 +360,32 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
 
 /// Image editor with all option available
 class SingleImageEditor extends StatefulWidget {
-  final Directory? savePath;
   final dynamic image;
-  final List? imageList;
-  final ImageEditorFeatures features;
-  final List<AspectRatioOption> cropAvailableRatios;
+  final Directory? savePath;
+
+  final o.ImagePickerOption? imagePickerOption;
+  final o.CropOption? cropOption;
+  final o.BlurOption? blurOption;
+  final o.BrushOption? brushOption;
+  final o.EmojiOption? emojiOption;
+  final o.FiltersOption? filtersOption;
+  final o.FlipOption? flipOption;
+  final o.RotateOption? rotateOption;
+  final o.TextOption? textOption;
 
   const SingleImageEditor({
     super.key,
-    this.savePath,
     this.image,
-    this.imageList,
-    this.features = const ImageEditorFeatures(
-      pickFromGallery: true,
-      captureFromCamera: true,
-      crop: true,
-      blur: true,
-      brush: true,
-      emoji: true,
-      filters: true,
-      flip: true,
-      rotate: true,
-      text: true,
-    ),
-    this.cropAvailableRatios = const [
-      AspectRatioOption(title: 'Freeform'),
-      AspectRatioOption(title: '1:1', ratio: 1),
-      AspectRatioOption(title: '4:3', ratio: 4 / 3),
-      AspectRatioOption(title: '5:4', ratio: 5 / 4),
-      AspectRatioOption(title: '7:5', ratio: 7 / 5),
-      AspectRatioOption(title: '16:9', ratio: 16 / 9),
-    ],
+    this.savePath,
+    this.imagePickerOption,
+    this.cropOption = const o.CropOption(),
+    this.blurOption = const o.BlurOption(),
+    this.brushOption = const o.BrushOption(),
+    this.emojiOption = const o.EmojiOption(),
+    this.filtersOption = const o.FiltersOption(),
+    this.flipOption = const o.FlipOption(),
+    this.rotateOption = const o.RotateOption(),
+    this.textOption = const o.TextOption(),
   });
 
   @override
@@ -394,12 +395,6 @@ class SingleImageEditor extends StatefulWidget {
 class _SingleImageEditorState extends State<SingleImageEditor> {
   ImageItem currentImage = ImageItem();
 
-  Offset offset1 = Offset.zero;
-  Offset offset2 = Offset.zero;
-  final scaffoldGlobalKey = GlobalKey<ScaffoldState>();
-
-  final GlobalKey container = GlobalKey();
-  final GlobalKey globalKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
   @override
@@ -449,7 +444,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 setState(() {});
               },
             ),
-            if (widget.features.pickFromGallery)
+            if (widget.imagePickerOption?.pickFromGallery == true)
               IconButton(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.photo),
@@ -462,7 +457,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   loadImage(image);
                 },
               ),
-            if (widget.features.captureFromCamera)
+            if (widget.imagePickerOption?.captureFromCamera == true)
               IconButton(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.camera_alt),
@@ -482,12 +477,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 resetTransformation();
                 setState(() {});
 
-                LoadingScreen(scaffoldGlobalKey).show();
+                loadingScreen.show();
 
                 var binaryIntList =
                     await screenshotController.capture(pixelRatio: pixelRatio);
 
-                LoadingScreen(scaffoldGlobalKey).hide();
+                loadingScreen.hide();
 
                 if (mounted) Navigator.pop(context, binaryIntList);
               },
@@ -532,14 +527,13 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
       return (layers.first as ImageLayerData).image.image;
     }
 
-    return screenshotController.capture(
-      pixelRatio: pixelRatio,
-    );
+    return screenshotController.capture(pixelRatio: pixelRatio);
   }
 
   @override
   Widget build(BuildContext context) {
     viewportSize = MediaQuery.of(context).size;
+    // pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     var layersStack = Stack(
       children: layers.map((layerItem) {
@@ -671,11 +665,11 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
             top: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.25),
-                ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.25),
+              ),
+              child: SafeArea(
                 child: Row(
                   children: filterActions,
                 ),
@@ -701,7 +695,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  if (widget.features.crop)
+                  if (widget.cropOption != null)
                     BottomButton(
                       icon: Icons.crop,
                       text: i18n('Crop'),
@@ -720,7 +714,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           MaterialPageRoute(
                             builder: (context) => ImageCropper(
                               image: mergedImage!,
-                              availableRatios: widget.cropAvailableRatios,
+                              availableRatios: widget.cropOption!.ratios,
                             ),
                           ),
                         );
@@ -734,39 +728,67 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.features.brush)
+                  if (widget.brushOption != null)
                     BottomButton(
                       icon: Icons.edit,
                       text: i18n('Brush'),
                       onTap: () async {
-                        var drawing = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageEditorDrawing(
-                              image: currentImage,
-                            ),
-                          ),
-                        );
-
-                        if (drawing != null) {
-                          undoLayers.clear();
-                          removedLayers.clear();
-
-                          layers.add(
-                            ImageLayerData(
-                              image: ImageItem(drawing),
-                              offset: Offset(
-                                -currentImage.width / 4,
-                                -currentImage.height / 4,
+                        if (widget.brushOption!.translatable) {
+                          var drawing = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ImageEditorDrawing(
+                                image: currentImage,
+                                options: widget.brushOption!,
                               ),
                             ),
                           );
 
-                          setState(() {});
+                          if (drawing != null) {
+                            undoLayers.clear();
+                            removedLayers.clear();
+
+                            layers.add(
+                              ImageLayerData(
+                                image: ImageItem(drawing),
+                                offset: Offset(
+                                  -currentImage.width / 4,
+                                  -currentImage.height / 4,
+                                ),
+                              ),
+                            );
+
+                            setState(() {});
+                          }
+                        } else {
+                          resetTransformation();
+                          LoadingScreen(scaffoldGlobalKey).show();
+
+                          var mergedImage = await getMergedImage();
+
+                          LoadingScreen(scaffoldGlobalKey).hide();
+
+                          if (!mounted) return;
+
+                          var drawing = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ImageEditorDrawing(
+                                image: ImageItem(mergedImage!),
+                                options: widget.brushOption!,
+                              ),
+                            ),
+                          );
+
+                          if (drawing != null) {
+                            currentImage.load(drawing);
+
+                            setState(() {});
+                          }
                         }
                       },
                     ),
-                  if (widget.features.text)
+                  if (widget.textOption != null)
                     BottomButton(
                       icon: Icons.text_fields,
                       text: i18n('Text'),
@@ -788,7 +810,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.features.flip)
+                  if (widget.flipOption != null)
                     BottomButton(
                       icon: Icons.flip,
                       text: i18n('Flip'),
@@ -798,7 +820,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         });
                       },
                     ),
-                  if (widget.features.rotate)
+                  if (widget.rotateOption != null)
                     BottomButton(
                       icon: Icons.rotate_left,
                       text: i18n('Rotate left'),
@@ -811,7 +833,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.features.rotate)
+                  if (widget.rotateOption != null)
                     BottomButton(
                       icon: Icons.rotate_right,
                       text: i18n('Rotate right'),
@@ -824,7 +846,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.features.blur)
+                  if (widget.blurOption != null)
                     BottomButton(
                       icon: Icons.blur_on,
                       text: i18n('Blur'),
@@ -847,6 +869,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                 topLeft: Radius.circular(10)),
                           ),
                           context: context,
+                          backgroundColor: Colors.transparent,
                           builder: (context) {
                             return StatefulBuilder(
                               builder: (context, setS) {
@@ -869,7 +892,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                           style: const TextStyle(
                                               color: Colors.white),
                                         )),
-                                        const Divider(),
                                         const SizedBox(height: 20.0),
                                         Text(
                                           i18n('Slider Color'),
@@ -1002,7 +1024,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   //     setState(() {});
                   //   },
                   // ),
-                  if (widget.features.filters)
+                  if (widget.filtersOption != null)
                     BottomButton(
                       icon: Icons.photo,
                       text: i18n('Filter'),
@@ -1027,6 +1049,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           MaterialPageRoute(
                             builder: (context) => ImageFilters(
                               image: mergedImage!,
+                              options: widget.filtersOption,
                             ),
                           ),
                         );
@@ -1051,7 +1074,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.features.emoji)
+                  if (widget.emojiOption != null)
                     BottomButton(
                       icon: FontAwesomeIcons.faceSmile,
                       text: i18n('Emoji'),
@@ -1117,7 +1140,7 @@ class BottomButton extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongPress,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
             Icon(
@@ -1138,18 +1161,18 @@ class BottomButton extends StatelessWidget {
 /// Crop given image with various aspect ratios
 class ImageCropper extends StatefulWidget {
   final Uint8List image;
-  final List<AspectRatioOption> availableRatios;
+  final List<o.AspectRatio> availableRatios;
 
   const ImageCropper({
     super.key,
     required this.image,
     this.availableRatios = const [
-      AspectRatioOption(title: 'Freeform'),
-      AspectRatioOption(title: '1:1', ratio: 1),
-      AspectRatioOption(title: '4:3', ratio: 4 / 3),
-      AspectRatioOption(title: '5:4', ratio: 5 / 4),
-      AspectRatioOption(title: '7:5', ratio: 7 / 5),
-      AspectRatioOption(title: '16:9', ratio: 16 / 9),
+      o.AspectRatio(title: 'Freeform'),
+      o.AspectRatio(title: '1:1', ratio: 1),
+      o.AspectRatio(title: '4:3', ratio: 4 / 3),
+      o.AspectRatio(title: '5:4', ratio: 5 / 4),
+      o.AspectRatio(title: '7:5', ratio: 7 / 5),
+      o.AspectRatio(title: '16:9', ratio: 16 / 9),
     ],
   });
 
@@ -1161,15 +1184,20 @@ class _ImageCropperState extends State<ImageCropper> {
   final GlobalKey<ExtendedImageEditorState> _controller =
       GlobalKey<ExtendedImageEditorState>();
 
-  double? aspectRatio;
-  double? aspectRatioOriginal;
+  double? currentRatio;
   bool isLandscape = true;
   int rotateAngle = 0;
+
+  double? get aspectRatio => currentRatio == null
+      ? null
+      : isLandscape
+          ? currentRatio!
+          : (1 / currentRatio!);
 
   @override
   void initState() {
     if (widget.availableRatios.isNotEmpty) {
-      aspectRatio = aspectRatioOriginal = widget.availableRatios.first.ratio;
+      currentRatio = widget.availableRatios.first.ratio;
     }
     _controller.currentState?.rotate(right: true);
 
@@ -1242,9 +1270,7 @@ class _ImageCropperState extends State<ImageCropper> {
                 //         ).paddingSymmetric(horizontal: 8, vertical: 4),
                 //         onPressed: () {
                 //           isLandscape = false;
-                //           if (aspectRatioOriginal != null) {
-                //             aspectRatio = 1 / aspectRatioOriginal!;
-                //           }
+                //
                 //           setState(() {});
                 //         },
                 //       ),
@@ -1255,7 +1281,7 @@ class _ImageCropperState extends State<ImageCropper> {
                 //         ).paddingSymmetric(horizontal: 8, vertical: 4),
                 //         onPressed: () {
                 //           isLandscape = true;
-                //           aspectRatio = aspectRatioOriginal!;
+                //
                 //           setState(() {});
                 //         },
                 //       ),
@@ -1292,8 +1318,7 @@ class _ImageCropperState extends State<ImageCropper> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        if (aspectRatioOriginal != null &&
-                            aspectRatioOriginal != 1)
+                        if (currentRatio != null && currentRatio != 1)
                           IconButton(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -1305,14 +1330,11 @@ class _ImageCropperState extends State<ImageCropper> {
                             ),
                             onPressed: () {
                               isLandscape = false;
-                              if (aspectRatioOriginal != null) {
-                                aspectRatio = 1 / aspectRatioOriginal!;
-                              }
+
                               setState(() {});
                             },
                           ),
-                        if (aspectRatioOriginal != null &&
-                            aspectRatioOriginal != 1)
+                        if (currentRatio != null && currentRatio != 1)
                           IconButton(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -1324,12 +1346,29 @@ class _ImageCropperState extends State<ImageCropper> {
                             ),
                             onPressed: () {
                               isLandscape = true;
-                              aspectRatio = aspectRatioOriginal!;
+
                               setState(() {});
                             },
                           ),
                         for (var ratio in widget.availableRatios)
-                          imageRatioButton(ratio.ratio, i18n(ratio.title)),
+                          TextButton(
+                            onPressed: () {
+                              currentRatio = ratio.ratio;
+
+                              setState(() {});
+                            },
+                            child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                child: Text(
+                                  i18n(ratio.title),
+                                  style: TextStyle(
+                                    color: currentRatio == ratio.ratio
+                                        ? Colors.white
+                                        : Colors.grey,
+                                  ),
+                                )),
+                          )
                       ],
                     ),
                   ),
@@ -1377,30 +1416,6 @@ class _ImageCropperState extends State<ImageCropper> {
 
     return result;
   }
-
-  Widget imageRatioButton(double? ratio, String title) {
-    return TextButton(
-      onPressed: () {
-        aspectRatioOriginal = ratio;
-
-        if (aspectRatioOriginal != null && isLandscape == false) {
-          aspectRatio = 1 / aspectRatioOriginal!;
-        } else {
-          aspectRatio = aspectRatioOriginal;
-        }
-
-        setState(() {});
-      },
-      child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Text(
-            i18n(title),
-            style: TextStyle(
-              color: aspectRatioOriginal == ratio ? Colors.white : Colors.grey,
-            ),
-          )),
-    );
-  }
 }
 
 /// Return filter applied Uint8List image
@@ -1409,11 +1424,13 @@ class ImageFilters extends StatefulWidget {
 
   /// apply each filter to given image in background and cache it to improve UX
   final bool useCache;
+  final o.FiltersOption? options;
 
   const ImageFilters({
     super.key,
     required this.image,
     this.useCache = true,
+    this.options,
   });
 
   @override
@@ -1427,9 +1444,15 @@ class _ImageFiltersState extends State<ImageFilters> {
   double filterOpacity = 1;
   Uint8List filterAppliedImage = Uint8List.fromList([]);
   ScreenshotController screenshotController = ScreenshotController();
+  late List<ColorFilterGenerator> filters;
 
   @override
   void initState() {
+    filters = [
+      PresetFilters.none,
+      ...(widget.options?.filters ?? presetFiltersList.sublist(1))
+    ];
+
     // decodedImage = img.decodeImage(widget.image)!;
     // resizedImage = img.copyResize(decodedImage, height: 64).getBytes();
 
@@ -1448,6 +1471,7 @@ class _ImageFiltersState extends State<ImageFilters> {
               icon: const Icon(Icons.check),
               onPressed: () async {
                 var data = await screenshotController.capture();
+
                 if (mounted) Navigator.pop(context, data);
               },
             ),
@@ -1612,10 +1636,15 @@ class FilterAppliedImage extends StatelessWidget {
 /// Show image drawing surface over image
 class ImageEditorDrawing extends StatefulWidget {
   final ImageItem image;
+  final o.BrushOption options;
 
   const ImageEditorDrawing({
     super.key,
     required this.image,
+    this.options = const o.BrushOption(
+      showBackground: true,
+      translatable: true,
+    ),
   });
 
   @override
@@ -1623,8 +1652,10 @@ class ImageEditorDrawing extends StatefulWidget {
 }
 
 class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
-  Color pickerColor = Colors.white;
-  Color currentColor = Colors.white;
+  Color pickerColor = Colors.white,
+      currentColor = Colors.white,
+      currentBackgroundColor = Colors.black;
+  var screenshotController = ScreenshotController();
 
   final control = HandSignatureControl(
     threshold: 3.0,
@@ -1635,19 +1666,10 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
   List<CubicPath> undoList = [];
   bool skipNextEvent = false;
 
-  List<Color> colorList = [
-    Colors.black,
-    Colors.white,
-    Colors.blue,
-    Colors.green,
-    Colors.pink,
-    Colors.purple,
-    Colors.brown,
-    Colors.indigo,
-  ];
+  void changeColor(o.BrushColor color) {
+    currentColor = color.color;
+    currentBackgroundColor = color.background;
 
-  void changeColor(Color color) {
-    currentColor = color;
     setState(() {});
   }
 
@@ -1721,34 +1743,51 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
               onPressed: () async {
                 if (control.paths.isEmpty) return Navigator.pop(context);
 
-                var data = await control.toImage(
-                  color: currentColor,
-                  height: widget.image.height,
-                  width: widget.image.width,
-                );
+                if (widget.options.translatable) {
+                  var data = await control.toImage(
+                    color: currentColor,
+                    height: widget.image.height,
+                    width: widget.image.width,
+                  );
+
+                  if (!mounted) return;
+
+                  return Navigator.pop(context, data!.buffer.asUint8List());
+                }
+
+                loadingScreen.show();
+                var image = await screenshotController.capture();
+                loadingScreen.hide();
 
                 if (!mounted) return;
 
-                return Navigator.pop(context, data!.buffer.asUint8List());
+                return Navigator.pop(context, image);
               },
             ),
           ],
         ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: Image.memory(widget.image.image).image,
-              fit: BoxFit.contain,
+        body: Screenshot(
+          controller: screenshotController,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color:
+                  widget.options.showBackground ? null : currentBackgroundColor,
+              image: widget.options.showBackground
+                  ? DecorationImage(
+                      image: Image.memory(widget.image.image).image,
+                      fit: BoxFit.contain,
+                    )
+                  : null,
             ),
-          ),
-          child: HandSignature(
-            control: control,
-            color: currentColor,
-            width: 1.0,
-            maxWidth: 10.0,
-            type: SignatureDrawType.shape,
+            child: HandSignature(
+              control: control,
+              color: currentColor,
+              width: 1.0,
+              maxWidth: 7.0,
+              type: SignatureDrawType.shape,
+            ),
           ),
         ),
         bottomNavigationBar: SafeArea(
@@ -1773,6 +1812,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                         ),
                       ),
                       context: context,
+                      backgroundColor: Colors.transparent,
                       builder: (context) {
                         return Container(
                           color: Colors.black87,
@@ -1782,7 +1822,10 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                               padding: const EdgeInsets.only(top: 16),
                               child: HueRingPicker(
                                 pickerColor: pickerColor,
-                                onColorChanged: changeColor,
+                                onColorChanged: (color) {
+                                  currentColor = color;
+                                  setState(() {});
+                                },
                               ),
                             ),
                           ),
@@ -1791,11 +1834,14 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                     );
                   },
                 ),
-                for (int i = 0; i < colorList.length; i++)
+                for (var color in widget.options.colors)
                   ColorButton(
-                    color: colorList[i],
-                    onTap: (color) => changeColor(color),
-                    isSelected: colorList[i] == currentColor,
+                    color: color.color,
+                    onTap: (color) {
+                      currentColor = color;
+                      setState(() {});
+                    },
+                    isSelected: color.color == currentColor,
                   ),
               ],
             ),
@@ -1809,7 +1855,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 /// Button used in bottomNavigationBar in ImageEditorDrawing
 class ColorButton extends StatelessWidget {
   final Color color;
-  final Function onTap;
+  final Function(Color) onTap;
   final bool isSelected;
 
   const ColorButton({

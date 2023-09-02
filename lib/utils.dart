@@ -71,39 +71,3 @@ class ImageUtils {
     return outputs;
   }
 }
-
-class AspectRatioOption {
-  final String title;
-  final double? ratio;
-
-  const AspectRatioOption({
-    required this.title,
-    this.ratio,
-  });
-}
-
-class ImageEditorFeatures {
-  final bool crop,
-      text,
-      brush,
-      flip,
-      rotate,
-      blur,
-      filters,
-      emoji,
-      pickFromGallery,
-      captureFromCamera;
-
-  const ImageEditorFeatures({
-    this.pickFromGallery = false,
-    this.captureFromCamera = false,
-    this.crop = false,
-    this.blur = false,
-    this.brush = false,
-    this.emoji = false,
-    this.filters = false,
-    this.flip = false,
-    this.rotate = false,
-    this.text = false,
-  });
-}
