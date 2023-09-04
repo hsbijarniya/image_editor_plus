@@ -12,7 +12,6 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_signature/signature.dart';
 import 'package:image/image.dart' as img;
-import 'package:image_editor/image_editor.dart' as image_editor;
 import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/layers/background_blur_layer.dart';
@@ -22,6 +21,7 @@ import 'package:image_editor_plus/layers/image_layer.dart';
 import 'package:image_editor_plus/layers/text_layer.dart';
 import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
+import 'package:image_editor_plus/modules/layers_overlay.dart';
 import 'package:image_editor_plus/modules/text.dart';
 import 'package:image_editor_plus/options.dart' as o;
 import 'package:image_picker/image_picker.dart';
@@ -194,6 +194,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
+        key: scaffoldGlobalKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           actions: [
@@ -339,6 +340,8 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                                   if (editedImage != null) {
                                     image.load(editedImage);
                                   }
+
+                                  setState(() {});
                                 },
                                 icon: const Icon(Icons.photo_filter_sharp),
                               ),
@@ -675,7 +678,49 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
               ),
             ),
-          )
+          ),
+          if (layers.length > 1)
+            Positioned(
+              bottom: 64,
+              left: 0,
+              child: SafeArea(
+                child: Container(
+                  height: 48,
+                  width: 48,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withAlpha(100),
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(19),
+                      bottomRight: Radius.circular(19),
+                    ),
+                  ),
+                  child: IconButton(
+                    iconSize: 20,
+                    padding: const EdgeInsets.all(0),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                          ),
+                        ),
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => SafeArea(
+                          child: ManageLayersOverlay(
+                            layers: layers,
+                            onUpdate: () => setState(() {}),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.layers),
+                  ),
+                ),
+              ),
+            ),
         ]),
         bottomNavigationBar: Container(
           // color: Colors.black45,
@@ -702,9 +747,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       onTap: () async {
                         resetTransformation();
                         LoadingScreen(scaffoldGlobalKey).show();
-
                         var mergedImage = await getMergedImage();
-
                         LoadingScreen(scaffoldGlobalKey).hide();
 
                         if (!mounted) return;
@@ -763,9 +806,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         } else {
                           resetTransformation();
                           LoadingScreen(scaffoldGlobalKey).show();
-
                           var mergedImage = await getMergedImage();
-
                           LoadingScreen(scaffoldGlobalKey).hide();
 
                           if (!mounted) return;
@@ -1040,7 +1081,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         //     break;
                         //   }
                         // }
+
+                        LoadingScreen(scaffoldGlobalKey).show();
                         var mergedImage = await getMergedImage();
+                        LoadingScreen(scaffoldGlobalKey).hide();
 
                         if (!mounted) return;
 
@@ -1221,9 +1265,14 @@ class _ImageCropperState extends State<ImageCropper> {
               onPressed: () async {
                 var state = _controller.currentState;
 
-                if (state == null) return;
+                if (state == null || state.getCropRect() == null) {
+                  Navigator.pop(context);
+                }
 
-                var data = await cropImageDataWithNativeLibrary(state: state);
+                var data = await cropImageWithThread(
+                  imageBytes: state!.rawImageData,
+                  rect: state.getCropRect()!,
+                );
 
                 if (mounted) Navigator.pop(context, data);
               },
@@ -1381,40 +1430,25 @@ class _ImageCropperState extends State<ImageCropper> {
     );
   }
 
-  Future<Uint8List?> cropImageDataWithNativeLibrary(
-      {required ExtendedImageEditorState state}) async {
-    final Rect? cropRect = state.getCropRect();
-    final EditActionDetails action = state.editAction!;
+  Future<Uint8List?> cropImageWithThread({
+    required Uint8List imageBytes,
+    required Rect rect,
+  }) async {
+    img.Command cropTask = img.Command();
+    cropTask.decodeImage(imageBytes);
 
-    final int rotateAngle = action.rotateAngle.toInt();
-    final bool flipHorizontal = action.flipY;
-    final bool flipVertical = action.flipX;
-    final Uint8List img = state.rawImageData;
-
-    final option = image_editor.ImageEditorOption();
-
-    if (action.needCrop) {
-      option.addOption(image_editor.ClipOption.fromRect(cropRect!));
-    }
-
-    if (action.needFlip) {
-      option.addOption(image_editor.FlipOption(
-          horizontal: flipHorizontal, vertical: flipVertical));
-    }
-
-    if (action.hasRotateAngle) {
-      option.addOption(image_editor.RotateOption(rotateAngle));
-    }
-
-    // final DateTime start = DateTime.now();
-    final Uint8List? result = await image_editor.ImageEditor.editImage(
-      image: img,
-      imageEditorOption: option,
+    cropTask.copyCrop(
+      x: rect.topLeft.dx.ceil(),
+      y: rect.topLeft.dy.ceil(),
+      height: rect.height.ceil(),
+      width: rect.width.ceil(),
     );
 
-    // print('${DateTime.now().difference(start)} ：total time');
+    img.Command encodeTask = img.Command();
+    encodeTask.subCommand = cropTask;
+    encodeTask.encodeJpg();
 
-    return result;
+    return encodeTask.getBytesThread();
   }
 }
 
@@ -1442,7 +1476,7 @@ class _ImageFiltersState extends State<ImageFilters> {
   ColorFilterGenerator selectedFilter = PresetFilters.none;
   Uint8List resizedImage = Uint8List.fromList([]);
   double filterOpacity = 1;
-  Uint8List filterAppliedImage = Uint8List.fromList([]);
+  Uint8List? filterAppliedImage;
   ScreenshotController screenshotController = ScreenshotController();
   late List<ColorFilterGenerator> filters;
 
@@ -1470,7 +1504,9 @@ class _ImageFiltersState extends State<ImageFilters> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
+                loadingScreen.show();
                 var data = await screenshotController.capture();
+                loadingScreen.hide();
 
                 if (mounted) Navigator.pop(context, data);
               },
@@ -1487,14 +1523,15 @@ class _ImageFiltersState extends State<ImageFilters> {
                   fit: BoxFit.cover,
                 ),
                 FilterAppliedImage(
+                  key: Key('selectedFilter:${selectedFilter.name}'),
                   image: widget.image,
                   filter: selectedFilter,
                   fit: BoxFit.cover,
                   opacity: filterOpacity,
-                  onProcess: (img) {
-                    // print('processing done');
-                    filterAppliedImage = img;
-                  },
+                  // onProcess: (img) {
+                  //   print('processing done');
+                  //   filterAppliedImage = img;
+                  // },
                 ),
               ],
             ),
@@ -1525,11 +1562,45 @@ class _ImageFiltersState extends State<ImageFilters> {
                 height: 120,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    for (int i = 0; i < presetFiltersList.length; i++)
-                      filterPreviewButton(
-                        filter: presetFiltersList[i],
-                        name: presetFiltersList[i].name,
+                  children: [
+                    for (var filter in filters)
+                      GestureDetector(
+                        onTap: () {
+                          selectedFilter = filter;
+                          setState(() {});
+                        },
+                        child: Column(children: [
+                          Container(
+                            height: 64,
+                            width: 64,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(48),
+                              border: Border.all(
+                                color: selectedFilter == filter
+                                    ? Colors.white
+                                    : Colors.black,
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(48),
+                              child: FilterAppliedImage(
+                                key: Key('filterPreviewButton:${filter.name}'),
+                                image: widget.image,
+                                filter: filter,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            i18n(filter.name),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ]),
                       ),
                   ],
                 ),
@@ -1540,94 +1611,120 @@ class _ImageFiltersState extends State<ImageFilters> {
       ),
     );
   }
-
-  Widget filterPreviewButton({required filter, required String name}) {
-    return GestureDetector(
-      onTap: () {
-        selectedFilter = filter;
-        setState(() {});
-      },
-      child: Column(children: [
-        Container(
-          height: 64,
-          width: 64,
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(48),
-            border: Border.all(
-              color: Colors.black,
-              width: 2,
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(48),
-            child: FilterAppliedImage(
-              image: widget.image,
-              filter: filter,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Text(
-          i18n(name),
-          style: const TextStyle(fontSize: 12),
-        ),
-      ]),
-    );
-  }
 }
 
-/// Short form of Image.memory wrapped in ColorFiltered
-class FilterAppliedImage extends StatelessWidget {
+class FilterAppliedImage extends StatefulWidget {
   final Uint8List image;
   final ColorFilterGenerator filter;
   final BoxFit? fit;
   final Function(Uint8List)? onProcess;
   final double opacity;
 
-  FilterAppliedImage({
+  const FilterAppliedImage({
     super.key,
     required this.image,
     required this.filter,
     this.fit,
     this.onProcess,
     this.opacity = 1,
-  }) {
+  });
+
+  @override
+  State<FilterAppliedImage> createState() => _FilterAppliedImageState();
+}
+
+class _FilterAppliedImageState extends State<FilterAppliedImage> {
+  @override
+  initState() {
+    super.initState();
+
     // process filter in background
-    if (onProcess != null) {
+    if (widget.onProcess != null) {
       // no filter supplied
-      if (filter.filters.isEmpty) {
-        onProcess!(image);
+      if (widget.filter.filters.isEmpty) {
+        widget.onProcess!(widget.image);
         return;
       }
 
-      final image_editor.ImageEditorOption option =
-          image_editor.ImageEditorOption();
+      var filterTask = img.Command();
+      filterTask.decodeImage(widget.image);
 
-      option.addOption(image_editor.ColorOption(matrix: filter.matrix));
+      var matrix = widget.filter.matrix;
 
-      image_editor.ImageEditor.editImage(
-        image: image,
-        imageEditorOption: option,
-      ).then((result) {
-        if (result != null) {
-          onProcess!(result);
+      filterTask.filter((image) {
+        for (final pixel in image) {
+          pixel.r = matrix[0] * pixel.r +
+              matrix[1] * pixel.g +
+              matrix[2] * pixel.b +
+              matrix[3] * pixel.a +
+              matrix[4];
+
+          pixel.g = matrix[5] * pixel.r +
+              matrix[6] * pixel.g +
+              matrix[7] * pixel.b +
+              matrix[8] * pixel.a +
+              matrix[9];
+
+          pixel.b = matrix[10] * pixel.r +
+              matrix[11] * pixel.g +
+              matrix[12] * pixel.b +
+              matrix[13] * pixel.a +
+              matrix[14];
+
+          pixel.a = matrix[15] * pixel.r +
+              matrix[16] * pixel.g +
+              matrix[17] * pixel.b +
+              matrix[18] * pixel.a +
+              matrix[19];
+        }
+
+        return image;
+      });
+
+      filterTask.getBytesThread().then((result) {
+        if (widget.onProcess != null && result != null) {
+          widget.onProcess!(result);
         }
       }).catchError((err, stack) {
         // print(err);
         // print(stack);
       });
+
+      // final image_editor.ImageEditorOption option =
+      //     image_editor.ImageEditorOption();
+
+      // option.addOption(image_editor.ColorOption(matrix: filter.matrix));
+
+      // image_editor.ImageEditor.editImage(
+      //   image: image,
+      //   imageEditorOption: option,
+      // ).then((result) {
+      //   if (result != null) {
+      //     onProcess!(result);
+      //   }
+      // }).catchError((err, stack) {
+      //   // print(err);
+      //   // print(stack);
+      // });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (filter.filters.isEmpty) return Image.memory(image, fit: fit);
+    if (widget.filter.filters.isEmpty) {
+      return Image.memory(
+        widget.image,
+        fit: widget.fit,
+      );
+    }
 
     return Opacity(
-      opacity: opacity,
-      child: filter.build(
-        Image.memory(image, fit: fit),
+      opacity: widget.opacity,
+      child: widget.filter.build(
+        Image.memory(
+          widget.image,
+          fit: widget.fit,
+        ),
       ),
     );
   }

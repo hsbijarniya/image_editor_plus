@@ -39,7 +39,6 @@ class _EmojiesState extends State<Emojies> {
                 style: const TextStyle(color: Colors.white),
               ),
             ]),
-            const Divider(height: 1),
             const SizedBox(height: 16),
             Container(
               height: 315,
@@ -66,6 +65,7 @@ class _EmojiesState extends State<Emojies> {
                     },
                     child: Container(
                       padding: EdgeInsets.zero,
+                      alignment: Alignment.center,
                       child: Text(
                         emoji,
                         style: const TextStyle(fontSize: 35),

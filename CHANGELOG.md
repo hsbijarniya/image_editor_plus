@@ -1,3 +1,8 @@
+## 1.0.1
+
+* added layers management and reorder overlay screen
+* dropped dependency image_editor
+
 ## 1.0.0
 
 * Breaking changes: ImageEditor class have multiple option like cropOption for crop releated setting.
