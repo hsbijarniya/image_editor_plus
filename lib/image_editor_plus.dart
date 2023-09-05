@@ -1,7 +1,6 @@
 library image_editor_plus;
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:colorfilter_generator/presets.dart';
@@ -42,7 +41,7 @@ String i18n(String sourceString) =>
 class ImageEditor extends StatelessWidget {
   final dynamic image;
   final List? images;
-  final Directory? savePath;
+  final String? savePath;
 
   final o.ImagePickerOption? imagePickerOption;
   final o.CropOption? cropOption;
@@ -146,7 +145,7 @@ class ImageEditor extends StatelessWidget {
 /// Show multiple image carousel to edit multple images at one and allow more images to be added
 class MultiImageEditor extends StatefulWidget {
   final List images;
-  final Directory? savePath;
+  final String? savePath;
 
   final o.ImagePickerOption? imagePickerOption;
   final o.CropOption? cropOption;
@@ -364,7 +363,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
 /// Image editor with all option available
 class SingleImageEditor extends StatefulWidget {
   final dynamic image;
-  final Directory? savePath;
+  final String? savePath;
 
   final o.ImagePickerOption? imagePickerOption;
   final o.CropOption? cropOption;

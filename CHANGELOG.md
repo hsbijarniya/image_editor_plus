@@ -1,3 +1,11 @@
+## 1.0.3
+
+* initial web support
+
+## 1.0.2
+
+* initial web support
+
 ## 1.0.1
 
 * added layers management and reorder overlay screen
