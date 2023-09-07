@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+@protected
 class LoadingScreen {
   final GlobalKey globalKey;
 

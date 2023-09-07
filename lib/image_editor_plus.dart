@@ -260,6 +260,8 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                               ),
                             );
 
+                            print(img);
+
                             if (img != null) {
                               image.load(img);
                               setState(() {});
@@ -451,12 +453,16 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.photo),
                 onPressed: () async {
-                  var image =
-                      await picker.pickImage(source: ImageSource.gallery);
+                  var image = await picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
 
                   if (image == null) return;
 
-                  loadImage(image);
+                  // loadImage(image);
+
+                  layers.add(ImageLayerData(image: ImageItem(image)));
+                  setState(() {});
                 },
               ),
             if (widget.imagePickerOption?.captureFromCamera == true)
@@ -464,12 +470,16 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 icon: const Icon(Icons.camera_alt),
                 onPressed: () async {
-                  var image =
-                      await picker.pickImage(source: ImageSource.camera);
+                  var image = await picker.pickImage(
+                    source: ImageSource.camera,
+                  );
 
                   if (image == null) return;
 
-                  loadImage(image);
+                  // loadImage(image);
+
+                  layers.add(ImageLayerData(image: ImageItem(image)));
+                  setState(() {});
                 },
               ),
             IconButton(
@@ -538,6 +548,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     // pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     var layersStack = Stack(
+      alignment: Alignment.center,
       children: layers.map((layerItem) {
         // Background layer
         if (layerItem is BackgroundLayerData) {
@@ -720,6 +731,34 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 ),
               ),
             ),
+          Positioned(
+            bottom: 64,
+            right: 0,
+            child: SafeArea(
+              child: Container(
+                height: 48,
+                width: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(100),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(19),
+                    bottomLeft: Radius.circular(19),
+                  ),
+                ),
+                child: IconButton(
+                  iconSize: 20,
+                  padding: const EdgeInsets.all(0),
+                  onPressed: () {
+                    resetTransformation();
+                  },
+                  icon: Icon(
+                    scaleFactor > 1 ? Icons.zoom_in_map : Icons.zoom_out_map,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ]),
         bottomNavigationBar: Container(
           // color: Colors.black45,
@@ -1066,7 +1105,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   // ),
                   if (widget.filtersOption != null)
                     BottomButton(
-                      icon: Icons.photo,
+                      icon: Icons.color_lens,
                       text: i18n('Filter'),
                       onTap: () async {
                         resetTransformation();
