@@ -193,7 +193,6 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        key: scaffoldGlobalKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           actions: [
