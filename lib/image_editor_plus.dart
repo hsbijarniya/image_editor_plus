@@ -193,7 +193,6 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        key: scaffoldGlobalKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           actions: [
@@ -479,12 +478,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 resetTransformation();
                 setState(() {});
 
-                loadingScreen.show();
+                LoadingScreen.show(context);
 
                 var binaryIntList =
                     await screenshotController.capture(pixelRatio: pixelRatio);
 
-                loadingScreen.hide();
+                LoadingScreen.hide(context);
 
                 if (mounted) Navigator.pop(context, binaryIntList);
               },
@@ -601,7 +600,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        key: scaffoldGlobalKey,
         body: Stack(children: [
           GestureDetector(
             onScaleUpdate: (details) {
@@ -745,9 +743,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       text: i18n('Crop'),
                       onTap: () async {
                         resetTransformation();
-                        LoadingScreen(scaffoldGlobalKey).show();
+                        LoadingScreen.show(context);
                         var mergedImage = await getMergedImage();
-                        LoadingScreen(scaffoldGlobalKey).hide();
+                        LoadingScreen.hide(context);
 
                         if (!mounted) return;
 
@@ -804,9 +802,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           }
                         } else {
                           resetTransformation();
-                          LoadingScreen(scaffoldGlobalKey).show();
+                          LoadingScreen.show(context);
                           var mergedImage = await getMergedImage();
-                          LoadingScreen(scaffoldGlobalKey).hide();
+                          LoadingScreen.hide(context);
 
                           if (!mounted) return;
 
@@ -1081,9 +1079,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         //   }
                         // }
 
-                        LoadingScreen(scaffoldGlobalKey).show();
+                        LoadingScreen.show(context);
                         var mergedImage = await getMergedImage();
-                        LoadingScreen(scaffoldGlobalKey).hide();
+                        LoadingScreen.hide(context);
 
                         if (!mounted) return;
 
@@ -1503,9 +1501,9 @@ class _ImageFiltersState extends State<ImageFilters> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
-                loadingScreen.show();
+                LoadingScreen.show(context);
                 var data = await screenshotController.capture();
-                loadingScreen.hide();
+                LoadingScreen.hide(context);
 
                 if (mounted) Navigator.pop(context, data);
               },
@@ -1851,9 +1849,9 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                   return Navigator.pop(context, data!.buffer.asUint8List());
                 }
 
-                loadingScreen.show();
+                LoadingScreen.show(context);
                 var image = await screenshotController.capture();
-                loadingScreen.hide();
+                LoadingScreen.hide(context);
 
                 if (!mounted) return;
 

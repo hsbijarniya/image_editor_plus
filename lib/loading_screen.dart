@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 
 class LoadingScreen {
-  final GlobalKey globalKey;
 
-  LoadingScreen(this.globalKey);
-
-  show([String? text]) {
-    if (globalKey.currentContext == null) return;
-
+  static show(BuildContext currentContext, [String? text]) {
     showDialog<String>(
-      context: globalKey.currentContext!,
+      context: currentContext,
       builder: (BuildContext context) => const Scaffold(
         backgroundColor: Color.fromRGBO(0, 0, 0, 0),
         body: Center(
@@ -27,15 +22,7 @@ class LoadingScreen {
     );
   }
 
-  hide() {
-    if (globalKey.currentContext == null) return;
-
-    Navigator.pop(globalKey.currentContext!);
+  static hide(BuildContext currentContext) {
+    Navigator.pop(currentContext);
   }
 }
-
-@protected
-final scaffoldGlobalKey = GlobalKey<ScaffoldState>();
-
-@protected
-var loadingScreen = LoadingScreen(scaffoldGlobalKey);
