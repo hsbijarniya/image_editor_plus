@@ -261,7 +261,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             );
 
                             if (img != null) {
-                              image.load(img);
+                              await image.load(img);
                               setState(() {});
                             }
                           },
@@ -337,7 +337,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                                   );
 
                                   if (editedImage != null) {
-                                    image.load(editedImage);
+                                    await image.load(editedImage);
                                   }
 
                                   setState(() {});
@@ -810,21 +810,25 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
                           if (!mounted) return;
 
-                          var drawing = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ImageEditorDrawing(
-                                image: ImageItem(mergedImage!),
-                                options: widget.brushOption!,
+                          var imageItem = ImageItem(mergedImage!);
+
+                          imageItem.loader.future.then((i) async {
+                            var drawing = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageEditorDrawing(
+                                  image: imageItem,
+                                  options: widget.brushOption!,
+                                ),
                               ),
-                            ),
-                          );
+                            );
 
-                          if (drawing != null) {
-                            currentImage.load(drawing);
+                            if (drawing != null) {
+                              await currentImage.load(drawing);
 
-                            setState(() {});
-                          }
+                              setState(() {});
+                            }
+                          });
                         }
                       },
                     ),
@@ -1788,6 +1792,10 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 
   @override
   Widget build(BuildContext context) {
+    final originalAspectRatio = widget.image.height / widget.image.width;
+    final mediaWidth = MediaQuery.of(context).size.width;
+    final scaling = mediaWidth / widget.image.width;
+    final scaledHeight = widget.image.width * originalAspectRatio * scaling;
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
@@ -1852,7 +1860,9 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                 }
 
                 loadingScreen.show();
-                var image = await screenshotController.capture();
+                var ratio = widget.image.height / widget.image.width;
+                var image =
+                    await screenshotController.capture(pixelRatio: ratio);
                 loadingScreen.hide();
 
                 if (!mounted) return;
@@ -1865,8 +1875,8 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
         body: Screenshot(
           controller: screenshotController,
           child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+            height: scaledHeight,
+            width: mediaWidth,
             decoration: BoxDecoration(
               color:
                   widget.options.showBackground ? null : currentBackgroundColor,

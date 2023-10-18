@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class ImageItem {
@@ -27,10 +28,16 @@ class ImageItem {
       loader.complete(true);
     } else if (imageFile is Uint8List) {
       image = imageFile;
-      decodedImage = await decodeImageFromList(imageFile);
+      final buffer = await ImmutableBuffer.fromUint8List(imageFile);
+      final codec = await instantiateImageCodecFromBuffer(buffer);
+      final frame = await codec.getNextFrame();
+      decodedImage = frame.image;
     } else {
       image = await imageFile.readAsBytes();
-      decodedImage = await decodeImageFromList(image);
+      final buffer = await ImmutableBuffer.fromUint8List(image);
+      final codec = await instantiateImageCodecFromBuffer(buffer);
+      final frame = await codec.getNextFrame();
+      decodedImage = frame.image;
     }
 
     // image was decoded
