@@ -13,16 +13,14 @@ import 'package:hand_signature/signature.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
-import 'package:image_editor_plus/layers/background_blur_layer.dart';
-import 'package:image_editor_plus/layers/background_layer.dart';
-import 'package:image_editor_plus/layers/emoji_layer.dart';
-import 'package:image_editor_plus/layers/image_layer.dart';
-import 'package:image_editor_plus/layers/text_layer.dart';
+import 'package:image_editor_plus/layers_viewer.dart';
 import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/layers_overlay.dart';
+import 'package:image_editor_plus/modules/link.dart';
 import 'package:image_editor_plus/modules/text.dart';
 import 'package:image_editor_plus/options.dart' as o;
+import 'package:image_editor_plus/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -42,6 +40,7 @@ class ImageEditor extends StatelessWidget {
   final dynamic image;
   final List? images;
   final String? savePath;
+  final int outputFormat;
 
   final o.ImagePickerOption? imagePickerOption;
   final o.CropOption? cropOption;
@@ -58,8 +57,8 @@ class ImageEditor extends StatelessWidget {
     this.image,
     this.images,
     this.savePath,
-    Color? appBarColor,
     this.imagePickerOption,
+    this.outputFormat = o.OutputFormat.jpeg,
     this.cropOption = const o.CropOption(),
     this.blurOption = const o.BlurOption(),
     this.brushOption = const o.BrushOption(),
@@ -85,6 +84,7 @@ class ImageEditor extends StatelessWidget {
         image: image,
         savePath: savePath,
         imagePickerOption: imagePickerOption,
+        outputFormat: outputFormat,
         cropOption: cropOption,
         blurOption: blurOption,
         brushOption: brushOption,
@@ -99,6 +99,7 @@ class ImageEditor extends StatelessWidget {
         images: images ?? [],
         savePath: savePath,
         imagePickerOption: imagePickerOption,
+        outputFormat: outputFormat,
         cropOption: cropOption,
         blurOption: blurOption,
         brushOption: brushOption,
@@ -146,6 +147,7 @@ class ImageEditor extends StatelessWidget {
 class MultiImageEditor extends StatefulWidget {
   final List images;
   final String? savePath;
+  final int outputFormat;
 
   final o.ImagePickerOption? imagePickerOption;
   final o.CropOption? cropOption;
@@ -162,6 +164,7 @@ class MultiImageEditor extends StatefulWidget {
     this.images = const [],
     this.savePath,
     this.imagePickerOption,
+    this.outputFormat = o.OutputFormat.jpeg,
     this.cropOption = const o.CropOption(),
     this.blurOption = const o.BlurOption(),
     this.brushOption = const o.BrushOption(),
@@ -256,11 +259,12 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                               MaterialPageRoute(
                                 builder: (context) => SingleImageEditor(
                                   image: image,
+                                  outputFormat: o.OutputFormat.jpeg,
                                 ),
                               ),
                             );
 
-                            print(img);
+                            // print(img);
 
                             if (img != null) {
                               image.load(img);
@@ -281,7 +285,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(4),
                               child: Image.memory(
-                                image.image,
+                                image.bytes,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -332,7 +336,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ImageFilters(
-                                        image: image.image,
+                                        image: image.bytes,
                                         options: widget.filtersOption,
                                       ),
                                     ),
@@ -366,6 +370,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
 class SingleImageEditor extends StatefulWidget {
   final dynamic image;
   final String? savePath;
+  final int outputFormat;
 
   final o.ImagePickerOption? imagePickerOption;
   final o.CropOption? cropOption;
@@ -382,6 +387,7 @@ class SingleImageEditor extends StatefulWidget {
     this.image,
     this.savePath,
     this.imagePickerOption,
+    this.outputFormat = o.OutputFormat.jpeg,
     this.cropOption = const o.CropOption(),
     this.blurOption = const o.BlurOption(),
     this.brushOption = const o.BrushOption(),
@@ -491,12 +497,30 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
 
                 loadingScreen.show();
 
-                var binaryIntList =
-                    await screenshotController.capture(pixelRatio: pixelRatio);
+                if ((widget.outputFormat & 0x1) == o.OutputFormat.json) {
+                  var json = layers.map((e) => e.toJson()).toList();
 
-                loadingScreen.hide();
+                  if ((widget.outputFormat & 0xFE) > 0) {
+                    var editedImageBytes =
+                        await getMergedImage(widget.outputFormat & 0xFE);
 
-                if (mounted) Navigator.pop(context, binaryIntList);
+                    json.insert(0, {
+                      'type': 'MergedLayer',
+                      'image': editedImageBytes,
+                    });
+                  }
+
+                  loadingScreen.hide();
+
+                  if (mounted) Navigator.pop(context, json);
+                } else {
+                  var editedImageBytes =
+                      await getMergedImage(widget.outputFormat & 0xFE);
+
+                  loadingScreen.hide();
+
+                  if (mounted) Navigator.pop(context, editedImageBytes);
+                }
               },
             ),
           ]),
@@ -532,82 +556,42 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   }
 
   /// obtain image Uint8List by merging layers
-  Future<Uint8List?> getMergedImage() async {
+  Future<Uint8List?> getMergedImage([int format = o.OutputFormat.png]) async {
+    Uint8List? image;
+
     if (layers.length == 1 && layers.first is BackgroundLayerData) {
-      return (layers.first as BackgroundLayerData).file.image;
+      image = (layers.first as BackgroundLayerData).image.bytes;
     } else if (layers.length == 1 && layers.first is ImageLayerData) {
-      return (layers.first as ImageLayerData).image.image;
+      image = (layers.first as ImageLayerData).image.bytes;
+    } else {
+      image = await screenshotController.capture(pixelRatio: pixelRatio);
     }
 
-    return screenshotController.capture(pixelRatio: pixelRatio);
+    // conversion for non-png
+    if (image != null &&
+        (format == o.OutputFormat.heic ||
+            format == o.OutputFormat.jpeg ||
+            format == o.OutputFormat.webp)) {
+      var formats = {
+        o.OutputFormat.heic: 'heic',
+        o.OutputFormat.jpeg: 'jpeg',
+        o.OutputFormat.webp: 'webp'
+      };
+
+      image = await ImageUtils.convert(image, format: formats[format]!);
+    }
+
+    return image;
   }
 
   @override
   Widget build(BuildContext context) {
     viewportSize = MediaQuery.of(context).size;
-    // pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
-    var layersStack = Stack(
-      alignment: Alignment.center,
-      children: layers.map((layerItem) {
-        // Background layer
-        if (layerItem is BackgroundLayerData) {
-          return BackgroundLayer(
-            layerData: layerItem,
-            onUpdate: () {
-              setState(() {});
-            },
-          );
-        }
-
-        // Image layer
-        if (layerItem is ImageLayerData) {
-          return ImageLayer(
-            layerData: layerItem,
-            onUpdate: () {
-              setState(() {});
-            },
-          );
-        }
-
-        // Background blur layer
-        if (layerItem is BackgroundBlurLayerData && layerItem.radius > 0) {
-          return BackgroundBlurLayer(
-            layerData: layerItem,
-            onUpdate: () {
-              setState(() {});
-            },
-          );
-        }
-
-        // Emoji layer
-        if (layerItem is EmojiLayerData) {
-          return EmojiLayer(
-            layerData: layerItem,
-            onUpdate: () {
-              setState(() {});
-            },
-          );
-        }
-
-        // Text layer
-        if (layerItem is TextLayerData) {
-          return TextLayer(
-            layerData: layerItem,
-            onUpdate: () {
-              setState(() {});
-            },
-          );
-        }
-
-        // Blank layer
-        return Container();
-      }).toList(),
-    );
-
-    widthRatio = currentImage.width / viewportSize.width;
-    heightRatio = currentImage.height / viewportSize.height;
-    pixelRatio = math.max(heightRatio, widthRatio);
+    // widthRatio = currentImage.width / viewportSize.width;
+    // heightRatio = currentImage.height / viewportSize.height;
+    // pixelRatio = math.max(heightRatio, widthRatio);
 
     return Theme(
       data: ImageEditor.theme,
@@ -667,7 +651,13 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         1 / scaleFactor,
                       )..rotateY(flipValue),
                       alignment: FractionalOffset.center,
-                      child: layersStack,
+                      child: LayersViewer(
+                        layers: layers,
+                        onUpdate: () {
+                          setState(() {});
+                        },
+                        editable: true,
+                      ),
                     ),
                   ),
                 ),
@@ -876,6 +866,28 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => const TextEditorImage(),
+                          ),
+                        );
+
+                        if (layer == null) return;
+
+                        undoLayers.clear();
+                        removedLayers.clear();
+
+                        layers.add(layer);
+
+                        setState(() {});
+                      },
+                    ),
+                  if (widget.textOption != null)
+                    BottomButton(
+                      icon: Icons.link,
+                      text: i18n('Link'),
+                      onTap: () async {
+                        LinkLayerData? layer = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LinkEditorImage(),
                           ),
                         );
 
@@ -1142,7 +1154,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         undoLayers.clear();
 
                         var layer = BackgroundLayerData(
-                          file: ImageItem(filterAppliedImage),
+                          image: ImageItem(filterAppliedImage),
                         );
 
                         /// Use case, if you don't want your filter to effect your
@@ -1151,7 +1163,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         //layers.insert(1, layer);
                         layers.add(layer);
 
-                        await layer.file.status;
+                        await layer.image.loader.future;
 
                         setState(() {});
                       },
@@ -1195,7 +1207,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     layers.clear();
 
     layers.add(BackgroundLayerData(
-      file: currentImage,
+      image: currentImage,
     ));
 
     setState(() {});
@@ -1911,7 +1923,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                   widget.options.showBackground ? null : currentBackgroundColor,
               image: widget.options.showBackground
                   ? DecorationImage(
-                      image: Image.memory(widget.image.image).image,
+                      image: Image.memory(widget.image.bytes).image,
                       fit: BoxFit.contain,
                     )
                   : null,

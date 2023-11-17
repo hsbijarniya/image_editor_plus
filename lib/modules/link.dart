@@ -3,16 +3,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 
-class TextEditorImage extends StatefulWidget {
-  const TextEditorImage({super.key});
+class LinkEditorImage extends StatefulWidget {
+  const LinkEditorImage({super.key});
 
   @override
-  createState() => _TextEditorImageState();
+  createState() => _LinkEditorImageState();
 }
 
-class _TextEditorImageState extends State<TextEditorImage> {
+class _LinkEditorImageState extends State<LinkEditorImage> {
   TextEditingController name = TextEditingController();
   Color currentColor = Colors.white;
+  Color backgroundColor = Colors.transparent;
   double slider = 32.0;
   TextAlign align = TextAlign.left;
 
@@ -63,7 +64,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
               onPressed: () {
                 Navigator.pop(
                   context,
-                  TextLayerData(
+                  LinkLayerData(
                     background: Colors.transparent,
                     text: name.text,
                     color: currentColor,
@@ -87,7 +88,7 @@ class _TextEditorImageState extends State<TextEditorImage> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.all(10),
-                    hintText: i18n('Insert Your Message'),
+                    hintText: i18n('https://example.com'),
                     hintStyle: const TextStyle(color: Colors.white),
                     alignLabelWithHint: true,
                   ),

@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
-import 'package:image_editor_plus/modules/text_layer_overlay.dart';
+import 'package:image_editor_plus/modules/link_layer_overlay.dart';
 
-/// Text layer
-class TextLayer extends StatefulWidget {
-  final TextLayerData layerData;
+/// Link layer
+class LinkLayer extends StatefulWidget {
+  final LinkLayerData layerData;
   final VoidCallback? onUpdate;
   final bool editable;
 
-  const TextLayer({
+  const LinkLayer({
     super.key,
     required this.layerData,
-    this.onUpdate,
     this.editable = false,
+    this.onUpdate,
   });
   @override
   createState() => _TextViewState();
 }
 
-class _TextViewState extends State<TextLayer> {
+class _TextViewState extends State<LinkLayer> {
   double initialSize = 0;
   double initialRotation = 0;
 
@@ -44,7 +44,7 @@ class _TextViewState extends State<TextLayer> {
                   context: context,
                   backgroundColor: Colors.transparent,
                   builder: (context) {
-                    return TextLayerOverlay(
+                    return LinkLayerOverlay(
                       index: layers.indexOf(widget.layerData),
                       layer: widget.layerData,
                       onUpdate: () {
@@ -79,21 +79,31 @@ class _TextViewState extends State<TextLayer> {
           child: Container(
             padding: const EdgeInsets.all(64),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: widget.layerData.background
-                    .withOpacity(widget.layerData.backgroundOpacity),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                widget.layerData.text.toString(),
-                textAlign: widget.layerData.align,
-                style: TextStyle(
-                  color: widget.layerData.color,
-                  fontSize: widget.layerData.size,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: widget.layerData.background
+                      .withOpacity(widget.layerData.backgroundOpacity),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ),
-            ),
+                child: Row(children: [
+                  Transform.rotate(
+                    angle: -0.4,
+                    child: Icon(
+                      Icons.link,
+                      color: widget.layerData.color,
+                      size: widget.layerData.size,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.layerData.text.toString(),
+                    textAlign: widget.layerData.align,
+                    style: TextStyle(
+                      color: widget.layerData.color,
+                      fontSize: widget.layerData.size,
+                    ),
+                  ),
+                ])),
           ),
         ),
       ),

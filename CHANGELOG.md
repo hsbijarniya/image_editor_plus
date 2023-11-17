@@ -1,6 +1,11 @@
+## 1.0.4
+
+* LayersViewer class added
+* OutputFormat option added to ImageEditor
+
 ## 1.0.3
 
-* initial web support
+* Web support fixes
 
 ## 1.0.2
 

@@ -3,12 +3,12 @@ import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'colors_picker.dart';
 
-class TextLayerOverlay extends StatefulWidget {
+class LinkLayerOverlay extends StatefulWidget {
   final int index;
-  final TextLayerData layer;
+  final LinkLayerData layer;
   final Function onUpdate;
 
-  const TextLayerOverlay({
+  const LinkLayerOverlay({
     super.key,
     required this.layer,
     required this.index,
@@ -16,10 +16,10 @@ class TextLayerOverlay extends StatefulWidget {
   });
 
   @override
-  createState() => _TextLayerOverlayState();
+  createState() => _LinkLayerOverlayState();
 }
 
-class _TextLayerOverlayState extends State<TextLayerOverlay> {
+class _LinkLayerOverlayState extends State<LinkLayerOverlay> {
   double slider = 0.0;
 
   @override
@@ -83,7 +83,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      widget.layer.backgroundOpacity = 0.5;
+                      widget.layer.backgroundOpacity = 0;
                       widget.onUpdate();
                     });
                   },
@@ -154,7 +154,6 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                         if (widget.layer.backgroundOpacity == 0) {
                           widget.layer.backgroundOpacity = 0.5;
                         }
-
                         widget.onUpdate();
                       });
                     },
@@ -203,7 +202,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      widget.layer.backgroundOpacity = 0;
+                      widget.layer.backgroundOpacity = 0.5;
                       widget.onUpdate();
                     });
                   },

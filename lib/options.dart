@@ -1,6 +1,25 @@
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:flutter/material.dart';
 
+class OutputFormat {
+  static const int
+
+      /// get all layers in json
+      json = 0x1,
+
+      /// get merged layer in heic
+      heic = 0x2,
+
+      /// get merged layer in jpeg
+      jpeg = 0x4,
+
+      /// get merged layer in png
+      png = 0x8,
+
+      /// get merged layer in webp
+      webp = 0x10;
+}
+
 class AspectRatio {
   final String title;
   final double? ratio;

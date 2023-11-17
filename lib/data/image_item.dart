@@ -5,36 +5,28 @@ import 'package:flutter/material.dart';
 class ImageItem {
   int width = 300;
   int height = 300;
-  Uint8List image = Uint8List.fromList([]);
+  Uint8List bytes = Uint8List.fromList([]);
   Completer loader = Completer();
 
   ImageItem([dynamic img]) {
     if (img != null) load(img);
   }
 
-  Future get status => loader.future;
-
   Future load(dynamic imageFile) async {
     loader = Completer();
-
-    dynamic decodedImage;
 
     if (imageFile is ImageItem) {
       height = imageFile.height;
       width = imageFile.width;
 
-      image = imageFile.image;
+      bytes = imageFile.bytes;
       loader.complete(true);
-    } else if (imageFile is Uint8List) {
-      image = imageFile;
-      decodedImage = await decodeImageFromList(imageFile);
     } else {
-      image = await imageFile.readAsBytes();
-      decodedImage = await decodeImageFromList(image);
-    }
+      bytes =
+          imageFile is Uint8List ? imageFile : await imageFile.readAsBytes();
+      var decodedImage = await decodeImageFromList(bytes);
 
-    // image was decoded
-    if (decodedImage != null) {
+      // image was decoded
       // print(['height', viewportSize.height, decodedImage.height]);
       // print(['width', viewportSize.width, decodedImage.width]);
 
@@ -45,5 +37,22 @@ class ImageItem {
     }
 
     return true;
+  }
+
+  static ImageItem fromJson(Map json) {
+    var image = ImageItem(json['image']);
+
+    image.width = json['width'];
+    image.height = json['height'];
+
+    return image;
+  }
+
+  Map toJson() {
+    return {
+      'height': height,
+      'width': width,
+      'bytes': bytes,
+    };
   }
 }

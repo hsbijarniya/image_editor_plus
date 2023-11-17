@@ -1,14 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-var _formatMap = <String, CompressFormat>{
-  'jpeg': CompressFormat.jpeg,
-  'jpg': CompressFormat.jpeg,
-  'heic': CompressFormat.heic,
-  'png': CompressFormat.png,
-  'webp': CompressFormat.webp,
-};
-
 class ImageUtils {
   static Future<Uint8List> convert(
     image, {
@@ -18,7 +10,14 @@ class ImageUtils {
     int? width,
     bool preserveExif = true,
   }) async {
-    if (!_formatMap.containsKey(format)) {
+    const formatMap = <String, CompressFormat>{
+      'jpeg': CompressFormat.jpeg,
+      'heic': CompressFormat.heic,
+      'png': CompressFormat.png,
+      'webp': CompressFormat.webp,
+    };
+
+    if (!formatMap.containsKey(format)) {
       throw Exception('Output format not supported by library.');
     }
 
@@ -26,7 +25,7 @@ class ImageUtils {
       var output = await FlutterImageCompress.compressWithList(
         image,
         quality: quality,
-        format: _formatMap[format]!,
+        format: formatMap[format]!,
         minHeight: height ?? 1080,
         minWidth: width ?? 1920,
         keepExif: preserveExif,
@@ -37,7 +36,7 @@ class ImageUtils {
       var output = await FlutterImageCompress.compressWithFile(
         image,
         quality: quality,
-        format: _formatMap[format]!,
+        format: formatMap[format]!,
         minHeight: height ?? 1080,
         minWidth: width ?? 1920,
         keepExif: preserveExif,
