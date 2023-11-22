@@ -1,3 +1,7 @@
+## 1.0.5
+
+* Permission check for Photos and Camera
+
 ## 1.0.4
 
 * LayersViewer class added

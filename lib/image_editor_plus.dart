@@ -22,6 +22,7 @@ import 'package:image_editor_plus/modules/text.dart';
 import 'package:image_editor_plus/options.dart' as o;
 import 'package:image_editor_plus/utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 
 import 'modules/colors_picker.dart';
@@ -42,7 +43,7 @@ class ImageEditor extends StatelessWidget {
   final String? savePath;
   final int outputFormat;
 
-  final o.ImagePickerOption? imagePickerOption;
+  final o.ImagePickerOption imagePickerOption;
   final o.CropOption? cropOption;
   final o.BlurOption? blurOption;
   final o.BrushOption? brushOption;
@@ -57,7 +58,7 @@ class ImageEditor extends StatelessWidget {
     this.image,
     this.images,
     this.savePath,
-    this.imagePickerOption,
+    this.imagePickerOption = const o.ImagePickerOption(),
     this.outputFormat = o.OutputFormat.jpeg,
     this.cropOption = const o.CropOption(),
     this.blurOption = const o.BlurOption(),
@@ -73,8 +74,8 @@ class ImageEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     if (image == null &&
         images == null &&
-        imagePickerOption?.captureFromCamera != true &&
-        imagePickerOption?.pickFromGallery != true) {
+        !imagePickerOption.captureFromCamera &&
+        !imagePickerOption.pickFromGallery) {
       throw Exception(
           'No image to work with, provide an image or allow the image picker.');
     }
@@ -149,7 +150,7 @@ class MultiImageEditor extends StatefulWidget {
   final String? savePath;
   final int outputFormat;
 
-  final o.ImagePickerOption? imagePickerOption;
+  final o.ImagePickerOption imagePickerOption;
   final o.CropOption? cropOption;
   final o.BlurOption? blurOption;
   final o.BrushOption? brushOption;
@@ -163,7 +164,7 @@ class MultiImageEditor extends StatefulWidget {
     super.key,
     this.images = const [],
     this.savePath,
-    this.imagePickerOption,
+    this.imagePickerOption = const o.ImagePickerOption(),
     this.outputFormat = o.OutputFormat.jpeg,
     this.cropOption = const o.CropOption(),
     this.blurOption = const o.BlurOption(),
@@ -181,10 +182,25 @@ class MultiImageEditor extends StatefulWidget {
 
 class _MultiImageEditorState extends State<MultiImageEditor> {
   List<ImageItem> images = [];
+  PermissionStatus galleryPermission = PermissionStatus.permanentlyDenied,
+      cameraPermission = PermissionStatus.permanentlyDenied;
+
+  checkPermissions() async {
+    if (widget.imagePickerOption.pickFromGallery) {
+      galleryPermission = await Permission.photos.status;
+    }
+
+    if (widget.imagePickerOption.captureFromCamera) {
+      cameraPermission = await Permission.camera.status;
+    }
+
+    setState(() {});
+  }
 
   @override
   void initState() {
     images = widget.images.map((e) => ImageItem(e)).toList();
+    checkPermissions();
 
     super.initState();
   }
@@ -202,34 +218,49 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
           actions: [
             const BackButton(),
             const Spacer(),
-            if (widget.imagePickerOption != null &&
-                images.length < widget.imagePickerOption!.maxLength &&
-                widget.imagePickerOption!.pickFromGallery)
-              IconButton(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                icon: const Icon(Icons.photo),
-                onPressed: () async {
-                  var selected = await picker.pickMultiImage();
+            if (images.length < widget.imagePickerOption.maxLength &&
+                widget.imagePickerOption.pickFromGallery)
+              Opacity(
+                opacity: galleryPermission.isPermanentlyDenied ? 0.5 : 1,
+                child: IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  icon: const Icon(Icons.photo),
+                  onPressed: () async {
+                    if (await Permission.photos.isPermanentlyDenied) {
+                      openAppSettings();
+                    }
 
-                  images.addAll(selected.map((e) => ImageItem(e)).toList());
-                  setState(() {});
-                },
+                    var selected = await imagePicker.pickMultiImage(
+                      requestFullMetadata: false,
+                    );
+
+                    images.addAll(selected.map((e) => ImageItem(e)).toList());
+                    setState(() {});
+                  },
+                ),
               ),
-            if (widget.imagePickerOption != null &&
-                images.length < widget.imagePickerOption!.maxLength &&
-                widget.imagePickerOption!.captureFromCamera)
-              IconButton(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                icon: const Icon(Icons.camera_alt),
-                onPressed: () async {
-                  var selected =
-                      await picker.pickImage(source: ImageSource.camera);
+            if (images.length < widget.imagePickerOption.maxLength &&
+                widget.imagePickerOption.captureFromCamera)
+              Opacity(
+                opacity: cameraPermission.isPermanentlyDenied ? 0.5 : 1,
+                child: IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: () async {
+                    if (await Permission.camera.isPermanentlyDenied) {
+                      openAppSettings();
+                    }
 
-                  if (selected == null) return;
+                    var selected = await imagePicker.pickImage(
+                      source: ImageSource.camera,
+                    );
 
-                  images.add(ImageItem(selected));
-                  setState(() {});
-                },
+                    if (selected == null) return;
+
+                    images.add(ImageItem(selected));
+                    setState(() {});
+                  },
+                ),
               ),
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -363,7 +394,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
     );
   }
 
-  final picker = ImagePicker();
+  final imagePicker = ImagePicker();
 }
 
 /// Image editor with all option available
@@ -372,7 +403,7 @@ class SingleImageEditor extends StatefulWidget {
   final String? savePath;
   final int outputFormat;
 
-  final o.ImagePickerOption? imagePickerOption;
+  final o.ImagePickerOption imagePickerOption;
   final o.CropOption? cropOption;
   final o.BlurOption? blurOption;
   final o.BrushOption? brushOption;
@@ -386,7 +417,7 @@ class SingleImageEditor extends StatefulWidget {
     super.key,
     this.image,
     this.savePath,
-    this.imagePickerOption,
+    this.imagePickerOption = const o.ImagePickerOption(),
     this.outputFormat = o.OutputFormat.jpeg,
     this.cropOption = const o.CropOption(),
     this.blurOption = const o.BlurOption(),
@@ -406,6 +437,24 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   ImageItem currentImage = ImageItem();
 
   ScreenshotController screenshotController = ScreenshotController();
+
+  PermissionStatus galleryPermission = PermissionStatus.permanentlyDenied,
+      cameraPermission = PermissionStatus.permanentlyDenied;
+
+  checkPermissions() async {
+    if (widget.imagePickerOption.pickFromGallery) {
+      galleryPermission = await Permission.photos.status;
+    }
+
+    if (widget.imagePickerOption.captureFromCamera) {
+      cameraPermission = await Permission.camera.status;
+    }
+
+    if (widget.imagePickerOption.pickFromGallery ||
+        widget.imagePickerOption.captureFromCamera) {
+      setState(() {});
+    }
+  }
 
   @override
   void dispose() {
@@ -454,39 +503,53 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 setState(() {});
               },
             ),
-            if (widget.imagePickerOption?.pickFromGallery == true)
-              IconButton(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                icon: const Icon(Icons.photo),
-                onPressed: () async {
-                  var image = await picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
+            if (widget.imagePickerOption.pickFromGallery)
+              Opacity(
+                opacity: galleryPermission.isPermanentlyDenied ? 0.5 : 1,
+                child: IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  icon: const Icon(Icons.photo),
+                  onPressed: () async {
+                    if (await Permission.photos.isPermanentlyDenied) {
+                      openAppSettings();
+                    }
 
-                  if (image == null) return;
+                    var image = await picker.pickImage(
+                      source: ImageSource.gallery,
+                    );
 
-                  // loadImage(image);
+                    if (image == null) return;
 
-                  layers.add(ImageLayerData(image: ImageItem(image)));
-                  setState(() {});
-                },
+                    // loadImage(image);
+
+                    layers.add(ImageLayerData(image: ImageItem(image)));
+                    setState(() {});
+                  },
+                ),
               ),
-            if (widget.imagePickerOption?.captureFromCamera == true)
-              IconButton(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                icon: const Icon(Icons.camera_alt),
-                onPressed: () async {
-                  var image = await picker.pickImage(
-                    source: ImageSource.camera,
-                  );
+            if (widget.imagePickerOption.captureFromCamera)
+              Opacity(
+                opacity: cameraPermission.isPermanentlyDenied ? 0.5 : 1,
+                child: IconButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: () async {
+                    if (await Permission.camera.isPermanentlyDenied) {
+                      openAppSettings();
+                    }
 
-                  if (image == null) return;
+                    var image = await picker.pickImage(
+                      source: ImageSource.camera,
+                    );
 
-                  // loadImage(image);
+                    if (image == null) return;
 
-                  layers.add(ImageLayerData(image: ImageItem(image)));
-                  setState(() {});
-                },
+                    // loadImage(image);
+
+                    layers.add(ImageLayerData(image: ImageItem(image)));
+                    setState(() {});
+                  },
+                ),
               ),
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -534,6 +597,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     if (widget.image != null) {
       loadImage(widget.image!);
     }
+
+    checkPermissions();
 
     super.initState();
   }
