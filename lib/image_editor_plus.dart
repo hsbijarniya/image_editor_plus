@@ -15,7 +15,6 @@ import 'package:image/image.dart' as img;
 import 'package:image_editor_plus/data/image_item.dart';
 import 'package:image_editor_plus/data/layer.dart';
 import 'package:image_editor_plus/layers_viewer.dart';
-import 'package:image_editor_plus/loading_screen.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/layers_overlay.dart';
 import 'package:image_editor_plus/modules/link.dart';
@@ -213,7 +212,6 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        key: scaffoldGlobalKey,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           actions: [
@@ -559,8 +557,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 resetTransformation();
                 setState(() {});
 
-                loadingScreen.show();
-
                 if ((widget.outputFormat & 0x1) == o.OutputFormat.json) {
                   var json = layers.map((e) => e.toJson()).toList();
 
@@ -574,14 +570,10 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                     });
                   }
 
-                  loadingScreen.hide();
-
                   if (mounted) Navigator.pop(context, json);
                 } else {
                   var editedImageBytes =
                       await getMergedImage(widget.outputFormat & 0xFE);
-
-                  loadingScreen.hide();
 
                   if (mounted) Navigator.pop(context, editedImageBytes);
                 }
@@ -662,7 +654,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
-        key: scaffoldGlobalKey,
         body: Stack(children: [
           GestureDetector(
             onScaleUpdate: (details) {
@@ -840,9 +831,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       text: i18n('Crop'),
                       onTap: () async {
                         resetTransformation();
-                        //LoadingScreen(scaffoldGlobalKey).show();
                         var mergedImage = await getMergedImage();
-                        //LoadingScreen(scaffoldGlobalKey).hide();
 
                         if (!mounted) return;
 
@@ -899,9 +888,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           }
                         } else {
                           resetTransformation();
-                          //LoadingScreen(scaffoldGlobalKey).show();
                           var mergedImage = await getMergedImage();
-                          //LoadingScreen(scaffoldGlobalKey).hide();
 
                           if (!mounted) return;
 
@@ -1197,9 +1184,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         //   }
                         // }
 
-                        LoadingScreen(scaffoldGlobalKey).show();
                         var mergedImage = await getMergedImage();
-                        LoadingScreen(scaffoldGlobalKey).hide();
 
                         if (!mounted) return;
 
@@ -1619,9 +1604,7 @@ class _ImageFiltersState extends State<ImageFilters> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
-                loadingScreen.show();
                 var data = await screenshotController.capture();
-                loadingScreen.hide();
 
                 if (mounted) Navigator.pop(context, data);
               },
@@ -1967,9 +1950,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                   return Navigator.pop(context, data!.buffer.asUint8List());
                 }
 
-                //loadingScreen.show();
                 var image = await screenshotController.capture();
-                //loadingScreen.hide();
 
                 if (!mounted) return;
 
