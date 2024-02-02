@@ -914,7 +914,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               ),
                             ),
                           );
-                          LoadingScreen(scaffoldGlobalKey).hide();
                           if (drawing != null) {
                             currentImage.load(drawing);
 
@@ -1965,7 +1964,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 
                   if (!mounted) return;
 
-                  return Navigator.pop(context, data!.buffer.asUint8List());
+                  return Navigator.pop(context, data);
                 }
 
                 loadingScreen.show();
