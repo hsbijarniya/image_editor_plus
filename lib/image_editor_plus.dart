@@ -1964,12 +1964,12 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
 
                   if (!mounted) return;
 
-                  return Navigator.pop(context, data);
+                  return Navigator.pop(context, data!.buffer.asUint8List());
                 }
 
-                loadingScreen.show();
+                //loadingScreen.show();
                 var image = await screenshotController.capture();
-                loadingScreen.hide();
+                //loadingScreen.hide();
 
                 if (!mounted) return;
 
