@@ -2,6 +2,7 @@ library image_editor_plus;
 
 import 'dart:async';
 import 'dart:math' as math;
+
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:colorfilter_generator/presets.dart';
 import 'package:extended_image/extended_image.dart';
@@ -839,9 +840,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       text: i18n('Crop'),
                       onTap: () async {
                         resetTransformation();
-                        LoadingScreen(scaffoldGlobalKey).show();
+                        //LoadingScreen(scaffoldGlobalKey).show();
                         var mergedImage = await getMergedImage();
-                        LoadingScreen(scaffoldGlobalKey).hide();
+                        //LoadingScreen(scaffoldGlobalKey).hide();
 
                         if (!mounted) return;
 
@@ -898,9 +899,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                           }
                         } else {
                           resetTransformation();
-                          LoadingScreen(scaffoldGlobalKey).show();
+                          //LoadingScreen(scaffoldGlobalKey).show();
                           var mergedImage = await getMergedImage();
-                          LoadingScreen(scaffoldGlobalKey).hide();
+                          //LoadingScreen(scaffoldGlobalKey).hide();
 
                           if (!mounted) return;
 
