@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_editor_plus/options.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 
 void main() {
   runApp(
     const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: ImageEditorExample(),
     ),
   );
@@ -53,28 +55,19 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
                 MaterialPageRoute(
                   builder: (context) => ImageEditor(
                     image: imageData,
-                  ),
-                ),
-              );
+                    rotateOption: null,
+                    flipOption: null,
+                    emojiOption: null,
+                    filtersOption: null,
+                    blurOption: null,
+                    linkOption: null,
 
-              // replace with edited image
-              if (editedImage != null) {
-                imageData = editedImage;
-                setState(() {});
-              }
-            },
-          ),
-          ElevatedButton(
-            child: const Text("Multiple image editor"),
-            onPressed: () async {
-              var editedImage = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImageEditor(
-                    images: [
-                      imageData,
-                      imageData,
-                    ],
+
+
+                    imagePickerOption: const ImagePickerOption(
+                      captureFromCamera: true,
+                      maxLength: 1,
+                    ),
                   ),
                 ),
               );
