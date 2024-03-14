@@ -52,6 +52,7 @@ class ImageEditor extends StatelessWidget {
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
   final o.TextOption? textOption;
+  final o.TextOption? linkOption;
 
   const ImageEditor({
     super.key,
@@ -68,6 +69,7 @@ class ImageEditor extends StatelessWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.linkOption = const o.TextOption(),
   });
 
   @override
@@ -121,12 +123,12 @@ class ImageEditor extends StatelessWidget {
 
   /// Set custom theme properties default is dark theme with white text
   static ThemeData theme = ThemeData(
-    scaffoldBackgroundColor: Colors.black,
+    scaffoldBackgroundColor: Colors.transparent,
     colorScheme: const ColorScheme.dark(
-      background: Colors.black,
+      background: Colors.white,
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: Colors.white),
       systemOverlayStyle: SystemUiOverlayStyle.light,
       toolbarTextStyle: TextStyle(color: Colors.white),
@@ -212,8 +214,10 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
     return Theme(
       data: ImageEditor.theme,
       child: Scaffold(
+        backgroundColor: Colors.white,
         key: scaffoldGlobalKey,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           actions: [
             const BackButton(),
@@ -412,6 +416,7 @@ class SingleImageEditor extends StatefulWidget {
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
   final o.TextOption? textOption;
+  final o.TextOption? linkOption;
 
   const SingleImageEditor({
     super.key,
@@ -427,6 +432,7 @@ class SingleImageEditor extends StatefulWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.linkOption = const o.TextOption(),
   });
 
   @override
@@ -944,7 +950,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.textOption != null)
+                  if (widget.linkOption != null)
                     BottomButton(
                       icon: Icons.link,
                       text: i18n('Link'),
