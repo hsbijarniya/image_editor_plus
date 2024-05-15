@@ -1,3 +1,9 @@
+## 1.0.6
+
+* Migrated from flutter_colorpicker to flex_color_picker
+* Aspect ratio reversible option added to ImageCropper
+* Removed global key use
+
 ## 1.0.5
 
 * Permission check for Photos and Camera
