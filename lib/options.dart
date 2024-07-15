@@ -1,23 +1,15 @@
 import 'package:colorfilter_generator/colorfilter_generator.dart';
 import 'package:flutter/material.dart';
 
-class OutputFormat {
-  static const int
+enum OutputFormat {
+  /// merge all layers and return jpeg encoded bytes
+  jpeg,
 
-      /// get all layers in json
-      json = 0x1,
+  /// convert all layers into json and return the list
+  json,
 
-      /// get merged layer in heic
-      heic = 0x2,
-
-      /// get merged layer in jpeg
-      jpeg = 0x4,
-
-      /// get merged layer in png
-      png = 0x8,
-
-      /// get merged layer in webp
-      webp = 0x10;
+  /// merge all layers and return png encoded bytes
+  png
 }
 
 class AspectRatio {

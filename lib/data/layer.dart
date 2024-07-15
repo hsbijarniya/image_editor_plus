@@ -4,7 +4,7 @@ import 'package:image_editor_plus/data/image_item.dart';
 /// Layer class with some common properties
 class Layer {
   Offset offset;
-  late double rotation, scale, opacity;
+  double rotation, scale, opacity;
 
   Layer({
     this.offset = const Offset(64, 64),
