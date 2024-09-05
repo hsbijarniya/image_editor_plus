@@ -8,6 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 // import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_signature/signature.dart';
@@ -308,8 +309,11 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             height: 300,
                             decoration: BoxDecoration(
                               color: Colors.transparent,
-                              border:
-                                  Border.all(color: Colors.white.withAlpha(80)),
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withAlpha(80)),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: ClipRRect(
@@ -329,7 +333,10 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                             width: 32,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(60),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withAlpha(60),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: IconButton(
@@ -353,7 +360,10 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                               width: 38,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.black.withAlpha(100),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surface
+                                    .withAlpha(100),
                                 borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(19),
                                 ),
@@ -474,7 +484,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: Icon(Icons.undo,
                   color: layers.length > 1 || removedLayers.isNotEmpty
-                      ? Colors.white
+                      ? Theme.of(context).colorScheme.onSurface
                       : Colors.grey),
               onPressed: () {
                 if (removedLayers.isNotEmpty) {
@@ -493,7 +503,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
             IconButton(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: Icon(Icons.redo,
-                  color: undoLayers.isNotEmpty ? Colors.white : Colors.grey),
+                  color: undoLayers.isNotEmpty
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Colors.grey),
               onPressed: () {
                 if (undoLayers.isEmpty) return;
 
@@ -740,7 +752,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
             right: 0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.25),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.25),
               ),
               child: SafeArea(
                 child: Row(
@@ -759,7 +771,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                   width: 48,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.black.withAlpha(100),
+                    color: Theme.of(context).colorScheme.surface.withAlpha(100),
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(19),
                       bottomRight: Radius.circular(19),
@@ -800,7 +812,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                 width: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(100),
+                  color: Theme.of(context).colorScheme.surface.withAlpha(100),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(19),
                     bottomLeft: Radius.circular(19),
@@ -821,12 +833,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           ),
         ]),
         bottomNavigationBar: Container(
-          // color: Colors.black45,
+          // color:Theme.of(context).colorScheme.surface45,
           alignment: Alignment.bottomCenter,
           height: 86 + MediaQuery.of(context).padding.bottom,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: const BoxDecoration(
-            color: Colors.black87,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface.withOpacity(.87),
             shape: BoxShape.rectangle,
             //   boxShadow: [
             //     BoxShadow(blurRadius: 1),
@@ -1037,9 +1049,12 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                               builder: (context, setS) {
                                 return SingleChildScrollView(
                                   child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.black87,
-                                      borderRadius: BorderRadius.only(
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surface
+                                          .withOpacity(.87),
+                                      borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(10),
                                           topLeft: Radius.circular(10)),
                                     ),
@@ -1051,21 +1066,29 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                             child: Text(
                                           i18n('Slider Filter Color')
                                               .toUpperCase(),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                         )),
                                         const SizedBox(height: 20.0),
                                         Text(
                                           i18n('Slider Color'),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                         ),
                                         const SizedBox(height: 10),
                                         Row(children: [
                                           Expanded(
                                             child: BarColorPicker(
                                               width: 300,
-                                              thumbColor: Colors.white,
+                                              thumbColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
                                               cornerRadius: 10,
                                               pickMode: PickMode.color,
                                               colorListener: (int value) {
@@ -1095,14 +1118,19 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                         const SizedBox(height: 5.0),
                                         Text(
                                           i18n('Blur Radius'),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                         ),
                                         const SizedBox(height: 10.0),
                                         Row(children: [
                                           Expanded(
                                             child: Slider(
-                                              activeColor: Colors.white,
+                                              activeColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
                                               inactiveColor: Colors.grey,
                                               value: blurLayer.radius,
                                               min: 0.0,
@@ -1124,7 +1152,9 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                               setS(() {
                                                 setState(() {
                                                   blurLayer.color =
-                                                      Colors.white;
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface;
                                                 });
                                               });
                                             },
@@ -1133,14 +1163,19 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                                         const SizedBox(height: 5.0),
                                         Text(
                                           i18n('Color Opacity'),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
                                         ),
                                         const SizedBox(height: 10.0),
                                         Row(children: [
                                           Expanded(
                                             child: Slider(
-                                              activeColor: Colors.white,
+                                              activeColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
                                               inactiveColor: Colors.grey,
                                               value: blurLayer.opacity,
                                               min: 0.00,
@@ -1246,7 +1281,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                       onTap: () async {
                         EmojiLayerData? layer = await showModalBottomSheet(
                           context: context,
-                          backgroundColor: Colors.black,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
                           builder: (BuildContext context) {
                             return const Emojies();
                           },
@@ -1310,7 +1346,7 @@ class BottomButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             const SizedBox(height: 8),
             Text(
@@ -1351,6 +1387,7 @@ class _ImageCropperState extends State<ImageCropper> {
   final _controller = GlobalKey<ExtendedImageEditorState>();
 
   double? currentRatio;
+
   bool get isLandscape => currentRatio != null && currentRatio! > 1;
   int rotateAngle = 0;
 
@@ -1396,7 +1433,7 @@ class _ImageCropperState extends State<ImageCropper> {
           ],
         ),
         body: Container(
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.surface,
           child: ExtendedImage.memory(
             widget.image,
             cacheRawData: true,
@@ -1451,7 +1488,7 @@ class _ImageCropperState extends State<ImageCropper> {
                 //         },
                 //       ),
                 //       Slider(
-                //         activeColor: Colors.white,
+                //         activeColor:Theme.of(context).colorScheme.onSurface,
                 //         inactiveColor: Colors.grey,
                 //         value: rotateAngle.toDouble(),
                 //         min: 0.0,
@@ -1470,10 +1507,10 @@ class _ImageCropperState extends State<ImageCropper> {
                 // ),
                 Container(
                   height: 80,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.surface,
                         blurRadius: 10,
                       ),
                     ],
@@ -1493,7 +1530,9 @@ class _ImageCropperState extends State<ImageCropper> {
                             ),
                             icon: Icon(
                               Icons.portrait,
-                              color: isLandscape ? Colors.grey : Colors.white,
+                              color: isLandscape
+                                  ? Colors.grey
+                                  : Theme.of(context).colorScheme.onSurface,
                             ),
                             onPressed: () {
                               currentRatio = 1 / currentRatio!;
@@ -1511,7 +1550,9 @@ class _ImageCropperState extends State<ImageCropper> {
                             ),
                             icon: Icon(
                               Icons.landscape,
-                              color: isLandscape ? Colors.white : Colors.grey,
+                              color: isLandscape
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : Colors.grey,
                             ),
                             onPressed: () {
                               currentRatio = 1 / currentRatio!;
@@ -1533,7 +1574,9 @@ class _ImageCropperState extends State<ImageCropper> {
                                   i18n(ratio.title),
                                   style: TextStyle(
                                     color: currentRatio == ratio.ratio
-                                        ? Colors.white
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
                                         : Colors.grey,
                                   ),
                                 )),
@@ -1701,8 +1744,8 @@ class _ImageFiltersState extends State<ImageFilters> {
                               borderRadius: BorderRadius.circular(48),
                               border: Border.all(
                                 color: selectedFilter == filter
-                                    ? Colors.white
-                                    : Colors.black,
+                                    ? Theme.of(context).colorScheme.onSurface
+                                    : Theme.of(context).colorScheme.surface,
                                 width: 2,
                               ),
                             ),
@@ -1869,9 +1912,12 @@ class ImageEditorDrawing extends StatefulWidget {
 }
 
 class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
+
+
+
   Color pickerColor = Colors.white,
       currentColor = Colors.white,
-      currentBackgroundColor = Colors.black;
+      currentBackgroundColor =  Colors.black;
   var screenshotController = ScreenshotController();
 
   final control = HandSignatureControl(
@@ -1928,8 +1974,8 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
               icon: Icon(
                 Icons.undo,
                 color: control.paths.isNotEmpty
-                    ? Colors.white
-                    : Colors.white.withAlpha(80),
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurface.withAlpha(80),
               ),
               onPressed: () {
                 if (control.paths.isEmpty) return;
@@ -1944,8 +1990,8 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
               icon: Icon(
                 Icons.redo,
                 color: undoList.isNotEmpty
-                    ? Colors.white
-                    : Colors.white.withAlpha(80),
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurface.withAlpha(80),
               ),
               onPressed: () {
                 if (undoList.isEmpty) return;
@@ -2034,7 +2080,7 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
                         return Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.black87,
+                            color: Theme.of(context).colorScheme.surface.withOpacity(.87),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(
                                 MediaQuery.of(context).size.width / 2,
@@ -2115,7 +2161,9 @@ class ColorButton extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? Colors.white : Colors.white54,
+            color: isSelected
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context).colorScheme.onSurface.withOpacity(.54),
             width: isSelected ? 3 : 1,
           ),
         ),
