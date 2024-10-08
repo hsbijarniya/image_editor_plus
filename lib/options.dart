@@ -94,11 +94,21 @@ class FlipOption {
 }
 
 class RotateOption {
-  const RotateOption();
+  final bool left;
+  final bool right;
+
+  const RotateOption({
+    this.left = true,
+    this.right = true,
+  });
 }
 
 class TextOption {
   const TextOption();
+}
+
+class LinkOption {
+  const LinkOption();
 }
 
 class ImagePickerOption {
