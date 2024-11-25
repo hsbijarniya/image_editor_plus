@@ -2,7 +2,7 @@ name: image_editor_plus
 description: Image Editor Plugin with filters, drawing, text and emoji like stories.
 version: 1.0.6
 homepage: https://ensorta.com
-repository: https://github.com/hsbijarniya/image_editor_plus
+repository: https://github.com/Deckers-Ohana/image_editor_plus
 
 environment:
     sdk: ">=2.17.3 <4.0.0"
