@@ -2018,58 +2018,58 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: <Widget>[
-                ColorButton(
-                  color: Colors.yellow,
-                  onTap: (color) {
-                    showModalBottomSheet(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                        ),
-                      ),
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) {
-                        return Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.black87,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(
-                                MediaQuery.of(context).size.width / 2,
-                              ),
-                              topRight: Radius.circular(
-                                MediaQuery.of(context).size.width / 2,
-                              ),
-                            ),
-                          ),
-                          child: SingleChildScrollView(
-                            child: ColorPicker(
-                              wheelDiameter:
-                                  MediaQuery.of(context).size.width - 64,
-                              color: currentColor,
-                              pickersEnabled: const {
-                                ColorPickerType.both: false,
-                                ColorPickerType.primary: false,
-                                ColorPickerType.accent: false,
-                                ColorPickerType.bw: false,
-                                ColorPickerType.custom: false,
-                                ColorPickerType.customSecondary: false,
-                                ColorPickerType.wheel: true,
-                              },
-                              enableShadesSelection: false,
-                              onColorChanged: (color) {
-                                currentColor = color;
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                // ColorButton(
+                //   color: Colors.yellow,
+                //   onTap: (color) {
+                //     showModalBottomSheet(
+                //       shape: const RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.only(
+                //           topRight: Radius.circular(10),
+                //           topLeft: Radius.circular(10),
+                //         ),
+                //       ),
+                //       context: context,
+                //       backgroundColor: Colors.transparent,
+                //       builder: (context) {
+                //         return Container(
+                //           padding: const EdgeInsets.all(20),
+                //           decoration: BoxDecoration(
+                //             color: Colors.black87,
+                //             borderRadius: BorderRadius.only(
+                //               topLeft: Radius.circular(
+                //                 MediaQuery.of(context).size.width / 2,
+                //               ),
+                //               topRight: Radius.circular(
+                //                 MediaQuery.of(context).size.width / 2,
+                //               ),
+                //             ),
+                //           ),
+                //           child: SingleChildScrollView(
+                //             child: ColorPicker(
+                //               wheelDiameter:
+                //                   MediaQuery.of(context).size.width - 64,
+                //               color: currentColor,
+                //               pickersEnabled: const {
+                //                 ColorPickerType.both: false,
+                //                 ColorPickerType.primary: false,
+                //                 ColorPickerType.accent: false,
+                //                 ColorPickerType.bw: false,
+                //                 ColorPickerType.custom: false,
+                //                 ColorPickerType.customSecondary: false,
+                //                 ColorPickerType.wheel: true,
+                //               },
+                //               enableShadesSelection: false,
+                //               onColorChanged: (color) {
+                //                 currentColor = color;
+                //                 setState(() {});
+                //               },
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     );
+                //   },
+                // ),
                 for (var color in widget.options.colors)
                   ColorButton(
                     color: color.color,
