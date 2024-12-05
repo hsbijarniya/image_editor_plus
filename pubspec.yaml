@@ -17,7 +17,7 @@ dependencies:
   image_picker: ^1.0.0
   screenshot: ^3.0.0
   extended_image: ^8.1.0
-  image: ^4.0.15
+  image: ^4.3.1
   colorfilter_generator: ^0.0.8
   hand_signature: ^3.0.0
   reorderables: ^0.6.0
