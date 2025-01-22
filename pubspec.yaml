@@ -15,9 +15,9 @@ dependencies:
     sdk: flutter
   font_awesome_flutter: ^10.1.0
   image_picker: ^1.0.0
-  screenshot: ^2.1.0
+  screenshot: ^3.0.0
   flutter_colorpicker: ^1.0.3
-  extended_image: ^8.1.0
+  extended_image: ^9.1.0
   image: ^4.0.15
   colorfilter_generator: ^0.0.8
   hand_signature: ^3.0.0
@@ -27,7 +27,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.1
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

@@ -121,7 +121,7 @@ class ImageEditor extends StatelessWidget {
   static ThemeData theme = ThemeData(
     scaffoldBackgroundColor: Colors.black,
     colorScheme: const ColorScheme.dark(
-      background: Colors.black,
+      surface: Colors.black,
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.black87,
@@ -1246,7 +1246,7 @@ class _ImageCropperState extends State<ImageCropper> {
     if (widget.availableRatios.isNotEmpty) {
       currentRatio = widget.availableRatios.first.ratio;
     }
-    _controller.currentState?.rotate(right: true);
+    _controller.currentState?.rotate();
 
     super.initState();
   }
