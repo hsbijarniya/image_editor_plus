@@ -13,7 +13,7 @@ class Layer {
     this.scale = 1,
   });
 
-  copyFrom(Map json) {
+  void copyFrom(Map json) {
     offset = Offset(json['offset'][0], json['offset'][1]);
     opacity = json['opacity'];
     rotation = json['rotation'];
@@ -183,8 +183,8 @@ class TextLayerData extends Layer {
       'type': 'TextLayer',
       'text': text,
       'size': size,
-      'color': color.value,
-      'background': background.value,
+      'color': color.toARGB32(),
+      'background': background.toARGB32(),
       'backgroundOpacity': backgroundOpacity,
       'align': align.name,
       ...super.toJson(),
@@ -233,8 +233,8 @@ class LinkLayerData extends Layer {
       'type': 'LinkLayer',
       'text': text,
       'size': size,
-      'color': color.value,
-      'background': background.value,
+      'color': color.toARGB32(),
+      'background': background.toARGB32(),
       'backgroundOpacity': backgroundOpacity,
       'align': align.name,
       ...super.toJson(),
@@ -270,7 +270,7 @@ class BackgroundBlurLayerData extends Layer {
   Map toJson() {
     return {
       'type': 'BackgroundBlurLayer',
-      'color': color.value,
+      'color': color.toARGB32(),
       'radius': radius,
       ...super.toJson(),
     };

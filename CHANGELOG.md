@@ -1,3 +1,11 @@
+## 1.0.8
+
+* Lower bound dependencies updated
+
+## 1.0.7
+
+* Dependencies updated
+
 ## 1.0.6
 
 * Migrated from flutter_colorpicker to flex_color_picker

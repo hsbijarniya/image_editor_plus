@@ -68,7 +68,7 @@ class LoadingScreenHandler {
     refresh();
   }
 
-  hide() {
+  void hide() {
     if (expired) return;
 
     expired = true;

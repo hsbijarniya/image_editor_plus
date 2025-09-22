@@ -1,5 +1,3 @@
-library image_editor_plus;
-
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:colorfilter_generator/colorfilter_generator.dart';
@@ -8,7 +6,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_signature/signature.dart';
 import 'package:image/image.dart' as img;
@@ -113,7 +110,7 @@ class ImageEditor extends StatelessWidget {
     }
   }
 
-  static setI18n(Map<String, String> translations) {
+  static void setI18n(Map<String, String> translations) {
     translations.forEach((key, value) {
       _translations[key.toLowerCase()] = value;
     });
@@ -185,7 +182,7 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
   PermissionStatus galleryPermission = PermissionStatus.permanentlyDenied,
       cameraPermission = PermissionStatus.permanentlyDenied;
 
-  checkPermissions() async {
+  void checkPermissions() async {
     if (widget.imagePickerOption.pickFromGallery) {
       galleryPermission = await Permission.photos.status;
     }
@@ -440,7 +437,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   PermissionStatus galleryPermission = PermissionStatus.permanentlyDenied,
       cameraPermission = PermissionStatus.permanentlyDenied;
 
-  checkPermissions() async {
+  void checkPermissions() async {
     if (widget.imagePickerOption.pickFromGallery) {
       galleryPermission = await Permission.photos.status;
     }
@@ -618,7 +615,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
   double lastScaleFactor = 1, scaleFactor = 1;
   double widthRatio = 1, heightRatio = 1, pixelRatio = 1;
 
-  resetTransformation() {
+  void resetTransformation() {
     scaleFactor = 1;
     x = 0;
     y = 0;
@@ -1359,7 +1356,7 @@ class _ImageCropperState extends State<ImageCropper> {
     if (widget.availableRatios.isNotEmpty) {
       currentRatio = widget.availableRatios.first.ratio;
     }
-    _controller.currentState?.rotate(right: true);
+    _controller.currentState?.rotate(degree: 90);
 
     super.initState();
   }
@@ -1875,9 +1872,11 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
   var screenshotController = ScreenshotController();
 
   final control = HandSignatureControl(
-    threshold: 3.0,
-    smoothRatio: 0.65,
-    velocityRange: 2.0,
+    initialSetup: SignaturePathSetup(
+      threshold: 3.0,
+      smoothRatio: 0.65,
+      velocityRange: 2.0,
+    ),
   );
 
   List<CubicPath> undoList = [];
@@ -2000,10 +1999,11 @@ class _ImageEditorDrawingState extends State<ImageEditorDrawing> {
             ),
             child: HandSignature(
               control: control,
-              color: currentColor,
-              width: 1.0,
-              maxWidth: 7.0,
-              type: SignatureDrawType.shape,
+              drawer: ShapeSignatureDrawer(
+                color: currentColor,
+                width: 1.0,
+                maxWidth: 7.0,
+              ),
             ),
           ),
         ),
