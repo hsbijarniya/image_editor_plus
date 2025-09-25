@@ -49,6 +49,7 @@ class ImageEditor extends StatelessWidget {
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
   final o.TextOption? textOption;
+  final o.LinkOption? linkOption;
 
   const ImageEditor({
     super.key,
@@ -65,6 +66,7 @@ class ImageEditor extends StatelessWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.linkOption = const o.LinkOption(),
   });
 
   @override
@@ -91,6 +93,7 @@ class ImageEditor extends StatelessWidget {
         flipOption: flipOption,
         rotateOption: rotateOption,
         textOption: textOption,
+        linkOption: linkOption,
       );
     } else {
       return MultiImageEditor(
@@ -106,6 +109,7 @@ class ImageEditor extends StatelessWidget {
         flipOption: flipOption,
         rotateOption: rotateOption,
         textOption: textOption,
+        linkOption: linkOption,
       );
     }
   }
@@ -156,6 +160,7 @@ class MultiImageEditor extends StatefulWidget {
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
   final o.TextOption? textOption;
+  final o.LinkOption? linkOption;
 
   const MultiImageEditor({
     super.key,
@@ -171,6 +176,7 @@ class MultiImageEditor extends StatefulWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.linkOption = const o.LinkOption(),
   });
 
   @override
@@ -408,6 +414,7 @@ class SingleImageEditor extends StatefulWidget {
   final o.FlipOption? flipOption;
   final o.RotateOption? rotateOption;
   final o.TextOption? textOption;
+  final o.LinkOption? linkOption;
 
   const SingleImageEditor({
     super.key,
@@ -423,6 +430,7 @@ class SingleImageEditor extends StatefulWidget {
     this.flipOption = const o.FlipOption(),
     this.rotateOption = const o.RotateOption(),
     this.textOption = const o.TextOption(),
+    this.linkOption = const o.LinkOption(),
   });
 
   @override
@@ -947,7 +955,7 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         setState(() {});
                       },
                     ),
-                  if (widget.textOption != null)
+                  if (widget.linkOption != null)
                     BottomButton(
                       icon: Icons.link,
                       text: i18n('Link'),
@@ -979,32 +987,33 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
                         });
                       },
                     ),
-                  if (widget.rotateOption != null)
+                  if (widget.rotateOption != null && widget.rotateOption!.left)
                     BottomButton(
                       icon: Icons.rotate_left,
                       text: i18n('Rotate left'),
                       onTap: () {
-                        var t = currentImage.width;
+                        var temp = currentImage.width;
                         currentImage.width = currentImage.height;
-                        currentImage.height = t;
+                        currentImage.height = temp;
 
                         rotateValue--;
                         setState(() {});
                       },
                     ),
-                  if (widget.rotateOption != null)
+                  if (widget.rotateOption != null && widget.rotateOption!.right)
                     BottomButton(
                       icon: Icons.rotate_right,
                       text: i18n('Rotate right'),
                       onTap: () {
-                        var t = currentImage.width;
+                        var temp = currentImage.width;
                         currentImage.width = currentImage.height;
-                        currentImage.height = t;
+                        currentImage.height = temp;
 
                         rotateValue++;
                         setState(() {});
                       },
                     ),
+
                   if (widget.blurOption != null)
                     BottomButton(
                       icon: Icons.blur_on,
